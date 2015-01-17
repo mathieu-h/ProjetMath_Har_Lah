@@ -7,6 +7,8 @@
 #include <fstream>
 #include "Point.h"
 #include "Segment.h"
+#include "Polygon.h"
+#include "Window.h"
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -79,6 +81,11 @@ bool visible(Point p, Segment seg_window)
     return false;
 }
 
+Polygon windowing(const Polygon polygon, const Window window)
+{
+    //TODO Algo Sutherland-Hodgman
+    return *new Polygon();
+}
 
 
 int main(int argc, char *argv[])
