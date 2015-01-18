@@ -9,29 +9,29 @@
 #ifndef __Cours1__Window__
 #define __Cours1__Window__
 
-#include "Segment.h"
-#include <list>
+#include "Point.h"
+#include <vector>
 
 class Window
 {
 private:
     std::string name;
-    std::list<Segment> segments;
+    std::vector<Point> points;
     
 public:
     
     /* Contructor and Desctructor */
     Window();
-    Window(const std::list<Segment> &segments, std::string name);
+    Window(const std::vector<Point> &points, std::string name);
     Window(const Window &win);
     ~Window(void);
     
     /* Getter and Setter */
     std::string get_name() const;
-    std::list<Segment> get_segments() const;
+    std::vector<Point> get_points() const;
     
     void set_name(std::string name);
-    void set_segments(std::list<Segment> segments);
+    void set_points(std::vector<Point> points);
 
     
     

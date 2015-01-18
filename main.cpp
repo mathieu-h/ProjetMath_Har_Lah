@@ -63,19 +63,19 @@ void InitGL()
     
 }
 
-bool intersect(Segment seg_polygon, Segment seg_window)
+bool intersect(Point lastPointPoly, Point currentPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
     //TODO
     return false;
 }
 
-Point intersection(Segment seg_polygon, Segment seg_window)
+Point intersection(Point lastPointPoly, Point currentPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
     //TODO
     return *new Point();
 }
 
-bool visible(Point p, Segment seg_window)
+bool visible(Point lastPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
     //TODO
     return false;
@@ -84,7 +84,26 @@ bool visible(Point p, Segment seg_window)
 Polygon windowing(const Polygon polygon, const Window window)
 {
     //TODO Algo Sutherland-Hodgman
-    return *new Polygon();
+    std::vector<Point> points_polygon = polygon.get_points();
+    std::vector<Point> points_window = window.get_points();
+    
+    Polygon polygonNew;
+    
+    for (std::size_t i = 1; i <= points_window.size(); ++i)
+    {
+        for (std::size_t j = 1; j <= points_polygon.size(); ++j)
+        {
+            
+            if(intersect(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]))
+            {
+                Point intersectionPoint = intersection(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]);
+                polygonNew.addPoint(intersectionPoint);
+            }
+        }
+    }
+    
+    
+    return polygonNew;
 }
 
 

@@ -8,30 +8,31 @@
 
 #ifndef __Cours1__Polygon__
 #define __Cours1__Polygon__
-#include "Segment.h"
-#include <list>
+#include "Point.h"
+#include <vector>
 
 class Polygon
 {
 private:
     std::string name;
-    std::list<Segment> segments;
+    std::vector<Point> points;
     
 public:
     
     /* Contructor and Desctructor */
     Polygon();
-    Polygon(const std::list<Segment> &segments, std::string name);
+    Polygon(const std::vector<Point> &points, std::string name);
     Polygon(const Polygon &poly);
     ~Polygon(void);
     
     /* Getter and Setter */
     std::string get_name() const;
-    std::list<Segment> get_segments() const;
+    std::vector<Point> get_points() const;
     
     void set_name(std::string name);
-    void set_segments(std::list<Segment> segments);
+    void set_points(std::vector<Point> points);
     
+    void addPoint(Point point);
     
 };
 

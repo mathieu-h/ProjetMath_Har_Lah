@@ -13,14 +13,14 @@ Polygon::Polygon()
     this->name = "Mon Polygone";
 }
 
-Polygon::Polygon(const std::list<Segment> &segments, std::string name)
+Polygon::Polygon(const std::vector<Point> &points, std::string name)
 {
-    this->segments = segments;
+    this->points = points;
     this->name = name;
 }
 
 Polygon::Polygon(const Polygon &poly){
-    this->segments = poly.segments;
+    this->points = poly.points;
     this->name = poly.name;
 }
 
@@ -34,9 +34,9 @@ std::string Polygon::get_name() const
     return this->name;
 }
 
-std::list<Segment> Polygon::get_segments() const
+std::vector<Point> Polygon::get_points() const
 {
-    return this->segments;
+    return this->points;
 }
 
 void Polygon::set_name(std::string name)
@@ -44,7 +44,13 @@ void Polygon::set_name(std::string name)
     this->name = name;
 }
 
-void Polygon::set_segments(std::list<Segment> segments)
+void Polygon::set_points(std::vector<Point> points)
 {
-    this->segments = segments;
+    this->points = points;
 }
+
+void Polygon::addPoint(Point point)
+{
+    this->points[points.size()] = point;
+}
+
