@@ -6,50 +6,50 @@
 //  Copyright (c) 2015 Maxime Lahaye. All rights reserved.
 //
 
-#include "Polygon.h"
+#include "CPolygon.h"
 
-Polygon::Polygon()
+CPolygon::CPolygon()
 {
-    this->name = "Mon Polygone";
+    this->name = "Mon CPolygone";
 }
 
-Polygon::Polygon(const std::vector<Point> &points, std::string name)
+CPolygon::CPolygon(const std::vector<Point> &points, std::string name)
 {
     this->points = points;
     this->name = name;
 }
 
-Polygon::Polygon(const Polygon &poly){
+CPolygon::CPolygon(const CPolygon &poly){
     this->points = poly.points;
     this->name = poly.name;
 }
 
-Polygon::~Polygon(void)
+CPolygon::~CPolygon(void)
 {
     
 }
 
-std::string Polygon::get_name() const
+std::string CPolygon::get_name() const
 {
     return this->name;
 }
 
-std::vector<Point> Polygon::get_points() const
+std::vector<Point> CPolygon::get_points() const
 {
     return this->points;
 }
 
-void Polygon::set_name(std::string name)
+void CPolygon::set_name(std::string name)
 {
     this->name = name;
 }
 
-void Polygon::set_points(std::vector<Point> points)
+void CPolygon::set_points(std::vector<Point> points)
 {
     this->points = points;
 }
 
-void Polygon::addPoint(Point point)
+void CPolygon::addPoint(Point point)
 {
     this->points[points.size()] = point;
 }

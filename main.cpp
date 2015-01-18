@@ -7,7 +7,7 @@
 #include <fstream>
 #include "Point.h"
 #include "Segment.h"
-#include "Polygon.h"
+#include "CPolygon.h"
 #include "Window.h"
 
 #ifdef __APPLE__
@@ -81,22 +81,40 @@ bool visible(Point lastPointPoly, Point currentPointWindow, Point nextPointWindo
     return false;
 }
 
-Polygon windowing(const Polygon polygon, const Window window)
+CPolygon windowing(const CPolygon polygon, const Window window)
 {
     //TODO Algo Sutherland-Hodgman
     std::vector<Point> points_polygon = polygon.get_points();
     std::vector<Point> points_window = window.get_points();
     
-    Polygon polygonNew;
+    CPolygon polygonNew;
     
     for (std::size_t i = 1; i <= points_window.size(); ++i)
     {
         for (std::size_t j = 1; j <= points_polygon.size(); ++j)
         {
-            
-            if(intersect(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]))
+            if(j == 1)
             {
-                Point intersectionPoint = intersection(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]);
+                
+            }
+            else
+            {
+                if(intersect(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]))
+                {
+                    Point intersectionPoint = intersection(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]);
+                    polygonNew.addPoint(intersectionPoint);
+                }
+            }
+            if(visible(points_polygon[j-1], points_window[i], points_window[i+1]))
+            {
+                polygonNew.addPoint(points_polygon[j-1]);
+            }
+        }
+        if(polygonNew.get_points().size() > 0)
+        {
+            if(intersect(points_polygon[i-1], points_polygon[1], points_window[i], points_window[i+1]))
+            {
+                Point intersectionPoint = intersection(points_polygon[i-1], points_polygon[1], points_window[i], points_window[i+1]);
                 polygonNew.addPoint(intersectionPoint);
             }
         }

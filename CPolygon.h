@@ -11,7 +11,7 @@
 #include "Point.h"
 #include <vector>
 
-class Polygon
+class CPolygon
 {
 private:
     std::string name;
@@ -20,10 +20,10 @@ private:
 public:
     
     /* Contructor and Desctructor */
-    Polygon();
-    Polygon(const std::vector<Point> &points, std::string name);
-    Polygon(const Polygon &poly);
-    ~Polygon(void);
+    CPolygon();
+    CPolygon(const std::vector<Point> &points, std::string name);
+    CPolygon(const CPolygon &poly);
+    ~CPolygon(void);
     
     /* Getter and Setter */
     std::string get_name() const;
