@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include "Point.h"
 
-class Segment
+class CVector
 {
     
 private:
@@ -20,10 +20,10 @@ private:
 
 public:
     /* Constructor and Destructor*/
-    Segment();
-    Segment(const Point &p1,const Point &p2);
-    Segment(const Segment &s);
-    ~Segment(void);
+    CVector();
+    CVector(const Point &p1,const Point &p2);
+    CVector(const CVector &c);
+    ~CVector(void);
     
     /* Getter and Setter */
     Point get_p1() const;
@@ -31,8 +31,13 @@ public:
     void set_p1(const Point p1);
     void set_p2(const Point p2);
     
+    float diff_x() const;
+    float diff_y() const;
+    
+    CVector normal() const;
+    
 };
 
-std::ostream& operator<<(std::ostream& out, const Segment &s);
+std::ostream& operator<<(std::ostream& out, const CVector &c);
 
 #endif /* defined(__Cours1__Segment__) */

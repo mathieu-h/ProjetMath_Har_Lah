@@ -6,10 +6,11 @@
 #include <iostream>
 #include <fstream>
 #include <numeric>
+
 #include "Point.h"
-#include "Segment.h"
 #include "CPolygon.h"
 #include "Window.h"
+#include "CVector.h"
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -92,16 +93,25 @@ bool intersect(Point lastPointPoly, Point currentPointPoly, Point currentPointWi
 Point intersection(Point lastPointPoly, Point currentPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
     //TODO
-    return *new Point();
+    return Point();
 }
 
+/***  Determine if the point of the polygon is inside or outside the window   ***/
 bool visible(Point lastPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
-    //TODO
+    //Vector in the same direction as the window's edge
+    CVector vector_window(currentPointWindow, nextPointWindow);
     
-    int dot = std::inner_product(<#_InputIterator1 __first1#>, <#_InputIterator1 __last1#>, <#_InputIterator2 __first2#>, <#_Tp __init#>)
+    //Vector linking the window's edge and the polygon point
+    CVector vector_poly(currentPointWindow, lastPointPoly);
     
-    return false;
+    //We need the normal of the window edge vector
+    CVector normal_window = vector_window.normal();
+    
+    //The dot product of the vector a . b = ax * bx + ay * by
+    float dot_product = normal_window.diff_x() * vector_poly.diff_x() + normal_window.diff_y() * vector_poly.diff_y();
+    
+    return dot_product >= 0;
 }
 
 CPolygon windowing(const CPolygon polygon, const Window window)
@@ -163,7 +173,18 @@ int main(int argc, char *argv[])
     glutDisplayFunc(Draw);
     InitGL();
     
-    glutMainLoop();
+    //glutMainLoop();
+    
+    Point p1(0,0);
+    Point p2(1,0);
+    Point p3(1,1);
+    
+    std::cout << visible(p3, p1, p2) << std::endl;
+    
+    p3.x_set(-1);
+    p3.y_set(-1);
+    
+    std::cout << visible(p3, p1, p2)<< std::endl;
     
     return EXIT_SUCCESS;
 }
