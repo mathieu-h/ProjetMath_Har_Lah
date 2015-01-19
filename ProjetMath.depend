@@ -1,0 +1,35 @@
+# depslib dependency file v1.0
+1421611541 source:d:\cours\math - infographie\projetmath\cpolygon.cpp
+	"CPolygon.h"
+
+1421611541 d:\cours\math - infographie\projetmath\cpolygon.h
+	"Point.h"
+	<vector>
+
+1421587272 d:\cours\math - infographie\projetmath\point.h
+	<stdio.h>
+	<iostream>
+	<cmath>
+
+1341010376 c:\program files (x86)\codeblocks\mingw\include\stdio.h
+	<_mingw.h>
+	<stddef.h>
+	<stdarg.h>
+	<sys/types.h>
+
+1341010370 c:\program files (x86)\codeblocks\mingw\include\_mingw.h
+
+1341010380 c:\program files (x86)\codeblocks\mingw\include\sys\types.h
+	<_mingw.h>
+	<stddef.h>
+
+1421587272 source:d:\cours\math - infographie\projetmath\point.cpp
+	"Point.h"
+
+1421605657 source:d:\cours\math - infographie\projetmath\window.cpp
+	"Window.h"
+
+1421605657 d:\cours\math - infographie\projetmath\window.h
+	"Point.h"
+	<vector>
+
