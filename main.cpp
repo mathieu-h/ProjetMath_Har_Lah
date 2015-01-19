@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
+#include <numeric>
 #include "Point.h"
 #include "Segment.h"
 #include "CPolygon.h"
@@ -37,6 +38,15 @@ void Reshape(int width, int height)
     glMatrixMode(GL_MODELVIEW);	//Optionnel
 }
 
+
+void DrawPolygon(CPolygon poly)
+{
+    glBegin(GL_POLYGON);
+    glVertex2i(0,1);
+    glVertex2i(-1,0);
+    glVertex2i(1,0);
+}
+
 void Draw()
 {	glClear
     (
@@ -46,10 +56,19 @@ void Draw()
     glMatrixMode(GL_MODELVIEW);	//Choisit la matrice MODELVIEW
     glLoadIdentity();	//Réinitialise la matrice
     gluLookAt(0,0,-10,0,0,0,0,1,0);
-    glBegin(GL_TRIANGLES);
-    glVertex2i(0,1);
-    glVertex2i(-1,0);
-    glVertex2i(1,0);
+    
+    CPolygon poly;
+    std::vector<Point> points;
+    Point p1(0,1);
+    Point p2(-1,0);
+    Point p3(1,0);
+    points.push_back(p1);
+    points.push_back(p2);
+    points.push_back(p3);
+    
+    poly.set_points(points);
+    
+    DrawPolygon(poly);
     
     glEnd();	//Pour les explications, lire le tutorial sur OGL et win
     glutSwapBuffers();
@@ -57,6 +76,7 @@ void Draw()
     //Attention : pas SwapBuffers(DC) !
     glutPostRedisplay();
 }
+
 
 void InitGL()
 {
@@ -78,6 +98,9 @@ Point intersection(Point lastPointPoly, Point currentPointPoly, Point currentPoi
 bool visible(Point lastPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
     //TODO
+    
+    int dot = std::inner_product(<#_InputIterator1 __first1#>, <#_InputIterator1 __last1#>, <#_InputIterator2 __first2#>, <#_Tp __init#>)
+    
     return false;
 }
 
@@ -112,12 +135,15 @@ CPolygon windowing(const CPolygon polygon, const Window window)
         }
         if(polygonNew.get_points().size() > 0)
         {
-            if(intersect(points_polygon[i-1], points_polygon[1], points_window[i], points_window[i+1]))
+            if(intersect(points_polygon[i], points_polygon[1], points_window[i], points_window[i+1]))
             {
                 Point intersectionPoint = intersection(points_polygon[i-1], points_polygon[1], points_window[i], points_window[i+1]);
                 polygonNew.addPoint(intersectionPoint);
             }
         }
+        
+        points_polygon = polygonNew.get_points();
+        
     }
     
     
