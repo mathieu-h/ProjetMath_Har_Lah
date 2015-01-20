@@ -19,81 +19,57 @@
 #else
 #include <GL/glut.h>
 #include <GL/glu.h>
-#include <GL/gl.h>
 #endif
 
-int WindowName;
+int height = 640;
+int width = 640;
 
+CPolygon polygon;
+Window window;
 
-void Reshape(int width, int height)
+float determinant(float w, float x, float y, float z)
 {
-    glViewport(0,0,width,height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(
-                   45,
-                   float(width)/float(height),
-                   0.1,
-                   100
-                   );	//Pour les explications, lire le tutorial sur OGL et win
-    glMatrixMode(GL_MODELVIEW);	//Optionnel
-}
-
-
-void DrawPolygon(CPolygon poly)
-{
-    glBegin(GL_POLYGON);
-    glVertex2i(0,1);
-    glVertex2i(-1,0);
-    glVertex2i(1,0);
-}
-
-void Draw()
-{	glClear
-    (
-     GL_COLOR_BUFFER_BIT |
-     GL_DEPTH_BUFFER_BIT
-     );	//Efface le frame buffer et le Z-buffer
-    glMatrixMode(GL_MODELVIEW);	//Choisit la matrice MODELVIEW
-    glLoadIdentity();	//Réinitialise la matrice
-    gluLookAt(0,0,-10,0,0,0,0,1,0);
-    
-    CPolygon poly;
-    std::vector<Point> points;
-    Point p1(0,1);
-    Point p2(-1,0);
-    Point p3(1,0);
-    points.push_back(p1);
-    points.push_back(p2);
-    points.push_back(p3);
-    
-    poly.set_points(points);
-    
-    DrawPolygon(poly);
-    
-    glEnd();	//Pour les explications, lire le tutorial sur OGL et win
-    glutSwapBuffers();
-    
-    //Attention : pas SwapBuffers(DC) !
-    glutPostRedisplay();
-}
-
-
-void InitGL()
-{
-    
+    return (w * z) - (y * x);
 }
 
 bool intersect(Point lastPointPoly, Point currentPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
-    //TODO
-    return false;
+    float x1 = lastPointPoly.x_get();
+    float x2 = currentPointPoly.x_get();
+    float x3 = currentPointWindow.x_get();
+    float x4 = nextPointWindow.x_get();
+    
+    float y1 = lastPointPoly.y_get();
+    float y2 = currentPointPoly.y_get();
+    float y3 = currentPointWindow.y_get();
+    float y4 = nextPointWindow.y_get();
+    
+    float den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    if(den == 0)
+    {
+        return false;
+    }
+    
+    return true;
 }
 
 Point intersection(Point lastPointPoly, Point currentPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
-    //TODO
-    return Point();
+    float x1 = lastPointPoly.x_get();
+    float x2 = currentPointPoly.x_get();
+    float x3 = currentPointWindow.x_get();
+    float x4 = nextPointWindow.x_get();
+    
+    float y1 = lastPointPoly.y_get();
+    float y2 = currentPointPoly.y_get();
+    float y3 = currentPointWindow.y_get();
+    float y4 = nextPointWindow.y_get();
+    
+    float px = (determinant(determinant(x1, y1, x2, y2), determinant(x1, 1, x2, 1), determinant(x3, y3, x4, y4), determinant(x3, 1, x4, 1)))/(determinant(determinant(x1, 1, x2, 1), determinant(y1, 1, y2, 1), determinant(x3, 1, x4, 1), determinant(y3, 1, y4, 1)));
+    
+    float py = (determinant(determinant(x1, y1, x2, y2), determinant(y1, 1, y2, 1), determinant(x3, y3, x4, y4), determinant(y3, 1, y4, 1)))/(determinant(determinant(x1, 1, x2, 1), determinant(y1, 1, y2, 1), determinant(x3, 1, x4, 1), determinant(y3, 1, y4, 1)));
+    
+    return Point(px, py);
 }
 
 /***  Determine if the point of the polygon is inside or outside the window   ***/
@@ -116,7 +92,6 @@ bool visible(Point lastPointPoly, Point currentPointWindow, Point nextPointWindo
 
 CPolygon windowing(const CPolygon polygon, const Window window)
 {
-    //TODO Algo Sutherland-Hodgman
     std::vector<Point> points_polygon = polygon.get_points();
     std::vector<Point> points_window = window.get_points();
     
@@ -160,31 +135,96 @@ CPolygon windowing(const CPolygon polygon, const Window window)
     return polygonNew;
 }
 
-
-int main(int argc, char *argv[])
+float convertViewportToOpenGLCoordinate(float x)
 {
+    return (x * 2) - 1;
+}
+
+void MouseButton(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON)
+    {
+       if(state == GLUT_DOWN)
+        {
+            std::cout << "x :" << x << std::endl;
+            float new_x = convertViewportToOpenGLCoordinate(x/(float)width);
+            std::cout << "new x :" << new_x << std::endl;
+            
+            std::cout << "y :" << y << std::endl;
+            float new_y = -convertViewportToOpenGLCoordinate(y/(float)height);
+            std::cout << "new y :" << new_y << std::endl;
+            
+            Point p(new_x, new_y);
+            polygon.addPoint(p);
+            std::cout << p << std::endl;
+        }
+    }
+}
+
+void update()
+{
+    glutPostRedisplay();
+}
+
+void DrawPolygon(std::vector<Point> points)
+{
+    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    glColor3d((float)(127.f/255.f), (float)(48.f/255.f), (float)(201.f/255.f));
+    glBegin(GL_POLYGON);
+    
+    for (std::size_t i = 0; i < points.size()  ; ++i) {
+        glVertex3f(points[i].x_get(), points[i].y_get(), 0.0);
+    }
+    glEnd();
+    
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    glColor3d(0, 0, 0);
+    glBegin(GL_POLYGON);
+    
+    glVertex3f(-0.5, 0.5, 0.0);
+    glVertex3f(0.5, 0.5, 0.0);
+    glVertex3f(0.5, -0.5, 0.0);
+    glVertex3f(-0.5, -0.5, 0.0);
+    
+    glEnd();
+
+
+}
+
+void renderScene()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(1, 1, 1, 1);
+    
+    
+//    DrawPolygon(window.get_points());
+    DrawPolygon(polygon.get_points());
+    
+    glutSwapBuffers();
+}
+
+int main(int argc, char **argv) {
+    
+    std::vector<Point> window_points;
+    window_points.push_back(Point(-0.5, 0.5));
+    window_points.push_back(Point(0.5, 0.5));
+    window_points.push_back(Point(0.5, -0.5));
+    window_points.push_back(Point(-0.5, -0.5));
+    
+    // init GLUT and create Window
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize(640,480);	//Optionnel
-    WindowName = glutCreateWindow("Ma première fenêtre OpenGL !");
-    //glutFullScreen();	//Optionnel
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+    glutInitWindowPosition(100,100);
+    glutInitWindowSize(width,height);
+    glutCreateWindow("Lighthouse3D - GLUT Tutorial");
     
-    glutReshapeFunc(Reshape);
-    glutDisplayFunc(Draw);
-    InitGL();
+    // register callbacks
+    glutDisplayFunc(renderScene);
+    glutMouseFunc (MouseButton);
+    glutIdleFunc(update);
     
-    //glutMainLoop();
+    // enter GLUT event processing cycle
+    glutMainLoop();
     
-    Point p1(0,0);
-    Point p2(1,0);
-    Point p3(1,1);
-    
-    std::cout << visible(p3, p1, p2) << std::endl;
-    
-    p3.x_set(-1);
-    p3.y_set(-1);
-    
-    std::cout << visible(p3, p1, p2)<< std::endl;
-    
-    return EXIT_SUCCESS;
+    return 1;
 }
