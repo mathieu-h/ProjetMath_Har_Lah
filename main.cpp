@@ -161,6 +161,15 @@ void MouseButton(int button, int state, int x, int y)
     }
 }
 
+void keyPressed(unsigned char key, int x, int y)
+{
+    std::cout << " " << key << std::endl;
+    if(key == '\n')
+    {
+        std::cout << "ENTER pressed" << std::endl;
+    }
+}
+
 void update()
 {
     glutPostRedisplay();
@@ -222,6 +231,7 @@ int main(int argc, char **argv) {
     glutDisplayFunc(renderScene);
     glutMouseFunc (MouseButton);
     glutIdleFunc(update);
+    glutKeyboardFunc(keyPressed);
     
     // enter GLUT event processing cycle
     glutMainLoop();
