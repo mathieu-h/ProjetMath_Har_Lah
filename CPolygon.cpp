@@ -49,8 +49,8 @@ void CPolygon::set_points(std::vector<Point> points)
     this->points = points;
 }
 
-void CPolygon::addPoint(Point point)
+void CPolygon::addPoint(Point &point)
 {
-    this->points[points.size()] = point;
+    this->points.push_back(point);
 }
 
