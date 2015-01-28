@@ -32,9 +32,12 @@ public:
     
     void set_name(std::string name);
     void set_points(std::vector<Point> points);
-
+    
+    void add_point(Point &p);
     
     
 };
+
+std::ostream& operator<<(std::ostream& out, const Window &w);
 
 #endif /* defined(__Cours1__Window__) */

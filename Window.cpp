@@ -48,3 +48,18 @@ void Window::set_points(std::vector<Point> points)
 {
     this->points = points;
 }
+
+void Window::add_point(Point &p)
+{
+    this->points.push_back(p);
+}
+
+std::ostream& operator<<(std::ostream& out, const Window &w)
+{
+    for (std::size_t i = 0; i < w.get_points().size(); ++i) {
+        out << w.get_points()[i] << " ";
+    }
+    
+    return out;
+}
+

@@ -33,7 +33,10 @@ public:
     void set_points(std::vector<Point> points);
     
     void addPoint(Point &point);
+    void clearPoints();
     
 };
+
+std::ostream& operator<<(std::ostream& out, const CPolygon &p);
 
 #endif /* defined(__Cours1__Polygon__) */
