@@ -54,3 +54,16 @@ void CPolygon::addPoint(Point &point)
     this->points.push_back(point);
 }
 
+void CPolygon::clearPoints()
+{
+    this->points.clear();
+}
+
+std::ostream& operator<<(std::ostream& out, const CPolygon &p)
+{
+    for (std::size_t i = 0; i < p.get_points().size(); ++i) {
+        out << p.get_points()[i] << " ";
+    }
+    
+    return out;
+}

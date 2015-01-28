@@ -1,4 +1,4 @@
-#ifdef WIN32
+                                #ifdef WIN32
 #include <windows.h>
 #endif
 
@@ -34,6 +34,7 @@ float determinant(float w, float x, float y, float z)
 
 bool intersect(Point lastPointPoly, Point currentPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
+    //A refaire
     float x1 = lastPointPoly.x_get();
     float x2 = currentPointPoly.x_get();
     float x3 = currentPointWindow.x_get();
@@ -55,6 +56,7 @@ bool intersect(Point lastPointPoly, Point currentPointPoly, Point currentPointWi
 
 Point intersection(Point lastPointPoly, Point currentPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
+    //A refaire
     float x1 = lastPointPoly.x_get();
     float x2 = currentPointPoly.x_get();
     float x3 = currentPointWindow.x_get();
@@ -97,11 +99,12 @@ CPolygon windowing(const CPolygon polygon, const Window window)
     
     CPolygon polygonNew;
     
-    for (std::size_t i = 1; i <= points_window.size(); ++i)
+    for (std::size_t i = 0; i < points_window.size(); ++i)
     {
-        for (std::size_t j = 1; j <= points_polygon.size(); ++j)
+        polygonNew.clearPoints();
+        for (std::size_t j = 0; j <= points_polygon.size()-1; ++j)
         {
-            if(j == 1)
+            if(j == 0)
             {
                 
             }
@@ -113,16 +116,16 @@ CPolygon windowing(const CPolygon polygon, const Window window)
                     polygonNew.addPoint(intersectionPoint);
                 }
             }
-            if(visible(points_polygon[j-1], points_window[i], points_window[i+1]))
+            if(visible(points_polygon[j], points_window[i], points_window[i+1]))
             {
-                polygonNew.addPoint(points_polygon[j-1]);
+                polygonNew.addPoint(points_polygon[j]);
             }
         }
         if(polygonNew.get_points().size() > 0)
         {
-            if(intersect(points_polygon[i], points_polygon[1], points_window[i], points_window[i+1]))
+            if(intersect(points_polygon[points_polygon.size()-1], points_polygon[0], points_window[i], points_window[i+1]))
             {
-                Point intersectionPoint = intersection(points_polygon[i-1], points_polygon[1], points_window[i], points_window[i+1]);
+                Point intersectionPoint = intersection(points_polygon[points_polygon.size()-1], points_polygon[0], points_window[i], points_window[i+1]);
                 polygonNew.addPoint(intersectionPoint);
             }
         }
@@ -131,7 +134,7 @@ CPolygon windowing(const CPolygon polygon, const Window window)
         
     }
     
-    
+    polygonNew.set_points(points_polygon);
     return polygonNew;
 }
 
@@ -164,9 +167,11 @@ void MouseButton(int button, int state, int x, int y)
 void keyPressed(unsigned char key, int x, int y)
 {
     std::cout << " " << key << std::endl;
-    if(key == '\n')
+    if(key == 13)
     {
         std::cout << "ENTER pressed" << std::endl;
+        CPolygon p = windowing(polygon, window);
+        std::cout << p << std::endl;
     }
 }
 
@@ -214,11 +219,15 @@ void renderScene()
 
 int main(int argc, char **argv) {
     
-    std::vector<Point> window_points;
-    window_points.push_back(Point(-0.5, 0.5));
-    window_points.push_back(Point(0.5, 0.5));
-    window_points.push_back(Point(0.5, -0.5));
-    window_points.push_back(Point(-0.5, -0.5));
+    Point p1(-0.5, 0.5);
+    Point p2(0.5, 0.5);
+    Point p3(0.5, -0.5);
+    Point p4(-0.5, -0.5);
+    
+    window.add_point(p1);
+    window.add_point(p2);
+    window.add_point(p3);
+    window.add_point(p4);
     
     // init GLUT and create Window
     glutInit(&argc, argv);
