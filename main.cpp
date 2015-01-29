@@ -1,4 +1,4 @@
-                                #ifdef WIN32
+#ifdef WIN32
 #include <windows.h>
 #endif
 
@@ -27,9 +27,9 @@ int width = 640;
 CPolygon polygon;
 Window window;
 
-float determinant(float w, float x, float y, float z)
+float determinant(float matrix[2][2])
 {
-    return (w * z) - (y * x);
+    return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
 }
 
 bool intersect(Point lastPointPoly, Point currentPointPoly, Point currentPointWindow, Point nextPointWindow)
@@ -45,18 +45,33 @@ bool intersect(Point lastPointPoly, Point currentPointPoly, Point currentPointWi
     float y3 = currentPointWindow.y_get();
     float y4 = nextPointWindow.y_get();
     
-    float den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    float den = (x2 - x1) * (y3 - y4) - (y2 - y1) * (x3 - x4);
     if(den == 0)
     {
+        //Line are parallel
+        std::cout << "parallel" << std::endl;
         return false;
     }
     
-    return true;
+    float t = -(x1*(y4-y3)-x3*(y4-y3)-(x4-x3)*y1+(x4-x3)*y3)/den;
+    float s = -(-(x2-x1)*y1 + (x2-x1)*y3 - (y2-y1)*x3)/den;
+    
+    //The intersection is on the line segment
+    if(/*s >= 0 && s <= 1 &&*/ t >= 0 && s <= 1)
+    {
+        std::cout << "Intersection on the line segment" << std::endl;
+        return true;
+    }
+    //The intersection is outside of the line segment
+    else
+    {
+        std::cout << "Intersection outside of the line segment" << std::endl;
+        return false;
+    }
 }
 
 Point intersection(Point lastPointPoly, Point currentPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
-    //A refaire
     float x1 = lastPointPoly.x_get();
     float x2 = currentPointPoly.x_get();
     float x3 = currentPointWindow.x_get();
@@ -67,11 +82,50 @@ Point intersection(Point lastPointPoly, Point currentPointPoly, Point currentPoi
     float y3 = currentPointWindow.y_get();
     float y4 = nextPointWindow.y_get();
     
-    float px = (determinant(determinant(x1, y1, x2, y2), determinant(x1, 1, x2, 1), determinant(x3, y3, x4, y4), determinant(x3, 1, x4, 1)))/(determinant(determinant(x1, 1, x2, 1), determinant(y1, 1, y2, 1), determinant(x3, 1, x4, 1), determinant(y3, 1, y4, 1)));
+    float matrixA[2][2];
+    float matrixAReverse[2][2];
+    float matrixRes[2];
+    float matrixB[2];
+    float det;
     
-    float py = (determinant(determinant(x1, y1, x2, y2), determinant(y1, 1, y2, 1), determinant(x3, y3, x4, y4), determinant(y3, 1, y4, 1)))/(determinant(determinant(x1, 1, x2, 1), determinant(y1, 1, y2, 1), determinant(x3, 1, x4, 1), determinant(y3, 1, y4, 1)));
+    Point p;
     
-    return Point(px, py);
+    matrixA[0][0] = (x2 - x1);
+    matrixA[0][1] = (x3 - x4);
+    matrixA[1][0] = (y2 - y1);
+    matrixA[1][1] = (y3 - y4);
+    
+    det = determinant(matrixA);
+    
+    if(det == 0){
+        std::cout << "parallel" << std::endl;
+        throw 1;
+    }
+    
+    matrixAReverse[0][0] = matrixA[1][1] / det;
+    matrixAReverse[0][1] = matrixA[1][0] / det;
+    matrixAReverse[1][0] = matrixA[0][1] / det;
+    matrixAReverse[1][1] = matrixA[0][0] / det;
+    
+    matrixB[0] = (x3 - x1);
+    matrixB[1] = (y3 - y1);
+    
+    //Matrix product
+    matrixRes[0] = matrixAReverse[0][0] * matrixB[0] + matrixAReverse[0][1] * matrixB[1];
+    matrixRes[1] = matrixAReverse[1][0] * matrixB[0] + matrixAReverse[1][1] * matrixB[1];
+    
+    if(matrixRes[0] < 0 || matrixRes[0] > 1)
+    {
+        std::cout << "Intersection outside of the line segment" << std::endl;
+        throw 2;
+    }
+    std::cout << "Intersection on the line segment" << std::endl;
+    
+    p.x_set(((1 - matrixRes[0]) * x1) + (matrixRes[0] * x2));
+    p.y_set(((1 - matrixRes[0]) * y1) + (matrixRes[0] * y2));
+    
+    
+    return p;
 }
 
 /***  Determine if the point of the polygon is inside or outside the window   ***/
@@ -110,10 +164,13 @@ CPolygon windowing(const CPolygon polygon, const Window window)
             }
             else
             {
-                if(intersect(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]))
-                {
+                try {
                     Point intersectionPoint = intersection(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]);
                     polygonNew.addPoint(intersectionPoint);
+                }
+                catch(int e)
+                {
+                    
                 }
             }
             if(visible(points_polygon[j], points_window[i], points_window[i+1]))
@@ -123,10 +180,13 @@ CPolygon windowing(const CPolygon polygon, const Window window)
         }
         if(polygonNew.get_points().size() > 0)
         {
-            if(intersect(points_polygon[points_polygon.size()-1], points_polygon[0], points_window[i], points_window[i+1]))
-            {
+            try {
                 Point intersectionPoint = intersection(points_polygon[points_polygon.size()-1], points_polygon[0], points_window[i], points_window[i+1]);
                 polygonNew.addPoint(intersectionPoint);
+            }
+            catch(int e)
+            {
+                
             }
         }
         
@@ -147,7 +207,7 @@ void MouseButton(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON)
     {
-       if(state == GLUT_DOWN)
+        if(state == GLUT_DOWN)
         {
             std::cout << "x :" << x << std::endl;
             float new_x = convertViewportToOpenGLCoordinate(x/(float)width);
@@ -171,6 +231,7 @@ void keyPressed(unsigned char key, int x, int y)
     {
         std::cout << "ENTER pressed" << std::endl;
         CPolygon p = windowing(polygon, window);
+        polygon = p;
         std::cout << p << std::endl;
     }
 }
@@ -201,8 +262,8 @@ void DrawPolygon(std::vector<Point> points)
     glVertex3f(-0.5, -0.5, 0.0);
     
     glEnd();
-
-
+    
+    
 }
 
 void renderScene()
@@ -211,7 +272,7 @@ void renderScene()
     glClearColor(1, 1, 1, 1);
     
     
-//    DrawPolygon(window.get_points());
+    //    DrawPolygon(window.get_points());
     DrawPolygon(polygon.get_points());
     
     glutSwapBuffers();
@@ -223,6 +284,32 @@ int main(int argc, char **argv) {
     Point p2(0.5, 0.5);
     Point p3(0.5, -0.5);
     Point p4(-0.5, -0.5);
+    Point p5(0.5, 1);
+    Point p6(1, 0.5);
+    Point p7(0.5, 0);
+    
+    
+    try
+    {
+        //Inside
+        std::cout << intersection(p1, p2, p5, p3) << std::endl << std::endl;
+        //Inside
+        std::cout << intersection(p1, p6, p5, p3) << std::endl << std::endl;
+        
+        //Parallel
+        std::cout << intersection(p1, p2, p4, p3) << std::endl << std::endl;
+        
+    }
+    catch(int e)
+    {
+        try {
+            //Outside
+            std::cout << intersection(p7, p3, p1, p6) << std::endl << std::endl;
+        } catch (int e) {
+            
+        }
+    }
+    
     
     window.add_point(p1);
     window.add_point(p2);
