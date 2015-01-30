@@ -1,3 +1,4 @@
+#include "stdafx.h"
 
 #include <stdlib.h>
 #include <iostream>
@@ -8,6 +9,7 @@
 #include "CPolygon.h"
 #include "Window.h"
 #include "CVector.h"
+#include "Node.h"
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -23,6 +25,8 @@ int width = 640;
 
 CPolygon polygon;
 Window window;
+
+#pragma region Windowing
 
 float determinant(float matrix[2][2])
 {
@@ -155,6 +159,27 @@ CPolygon windowing(const CPolygon polygon, const Window window)
 	return polygonNew;
 }
 
+#pragma endregion
+
+#pragma region Filling
+
+std::vector<Node> AET;
+std::vector<Node> ET;
+
+void draw_pixel(int x,int y)
+{
+    glColor3f(0.0,1.0,1.0);
+    glPointSize(1.0);
+    glBegin(GL_POINTS);
+    glVertex2i(x,y);
+    glEnd();
+}
+
+
+#pragma endregion
+
+#pragma region GLUT
+
 float convertViewportToOpenGLCoordinate(float x)
 {
 	return (x * 2) - 1;
@@ -265,3 +290,5 @@ int main(int argc, char **argv) {
 
 	return 1;
 }
+
+#pragma endregion
