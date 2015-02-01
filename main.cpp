@@ -21,8 +21,8 @@
 #include <GL/glu.h>
 #endif
 
-int height = 640;
-int width = 640;
+float height = 640.0f;
+float width = 640.0f;
 
 CPolygon polygon;
 Window window;
@@ -227,7 +227,7 @@ std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
     std::vector<Edge> newET;
     std::vector<Point> points = polygon.get_points();
     
-    /*for (std::size_t i = 1; i <= points.size(); ++i)
+    for (std::size_t i = 1; i <= points.size(); ++i)
     {
         Point start = points[i-1];
         Point end;
@@ -245,10 +245,10 @@ std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
         float yMin = (start.y_get() < end.y_get())?start.y_get():end.y_get();
         float xMin = (start.x_get() < end.x_get())?start.x_get():end.x_get();
         
-        Edge edge(yMax, xMin, 1.0f/slope);
+        Edge edge(yMax, yMin, xMin, 1.0f/slope);
         
         newET.insert(newET.begin() + yMin, edge);
-    }*/
+    }
     
     return newET;
 }
@@ -336,11 +336,17 @@ void DrawPolygon(std::vector<Point> points)
 
 	glEnd();
 
-    /*glColor3d(0, 0, 0);
-    glBegin(GL_LINES);
-    glVertex2f(-0.3, 0.3);
-    glVertex2f(0.3, 0.3);
-    glEnd();*/
+    float y = -1;
+    
+    for (int i = 0; i < glutGet(GLUT_WINDOW_HEIGHT); ++i) {
+        glColor3d(0, 0, 0);
+        glBegin(GL_LINES);
+        glVertex2f(-0.3, y);
+        glVertex2f(0.3, y);
+        glEnd();
+        
+        y+= 2.0f/glutGet(GLUT_WINDOW_HEIGHT);
+    }
 
 }
 

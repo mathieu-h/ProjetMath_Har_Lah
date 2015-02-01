@@ -8,16 +8,17 @@ Edge::Edge(void)
 }
 
 
-Edge::Edge(float yMax, float xMin, float mRev)
+Edge::Edge(float yMax, float yMin, float xMin, float mRev)
 {
 	this->yMax = yMax;
+    this->yMin = yMin;
 	this->xMin = xMin;
 	this->mRev = mRev;
 }
 
-Edge::Edge(float yMax, float xMin, float mRev, EdgePtr next)
+Edge::Edge(float yMax, float yMin, float xMin, float mRev, EdgePtr next)
 {
-	Edge(yMax, xMin, mRev);
+	Edge(yMax, yMin, xMin, mRev);
 	this->next = next;
 }
 
@@ -30,6 +31,11 @@ Edge::~Edge(void)
 float Edge::getYMax() const
 {
 	return this->yMax;
+}
+
+float Edge::getYMin() const
+{
+    return this->yMin;
 }
 
 float Edge::getXMin() const
@@ -50,6 +56,11 @@ EdgePtr Edge::getNext() const
 void Edge::setYMax(float yMax)
 {
 	this->yMax = yMax;
+}
+
+void Edge::setYMin(float yMin)
+{
+    this->yMin = yMin;
 }
 
 void Edge::setXMin(float xMin)
