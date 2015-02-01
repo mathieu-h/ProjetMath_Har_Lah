@@ -173,8 +173,8 @@ std::vector<Edge> ET;
 
 void draw_pixel(int x,int y)
 {
-    glColor3f(0.0,1.0,1.0);
-    glPointSize(1.0);
+    glColor3d(0, 0, 0);
+    glPointSize(5.0);
     glBegin(GL_POINTS);
     glVertex2i(x,y);
     glEnd();
@@ -208,16 +208,46 @@ float getMaxY(std::vector<Point> points)
     }
     
     return maxY;
+}
 
+float calculateSlope(Point a, Point b)
+{
+    return (b.y_get() - a.y_get())/(b.x_get() - a.x_get());
 }
 
 std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
 {
-    std::vector<Edge> ET;
+    draw_pixel(0, 0);
     float minY = getMinY(polygon.get_points());
     float maxY = getMaxY(polygon.get_points());
+    int size = maxY - minY;
+    std::vector<Edge> newET(size);
+    std::vector<Point> points = polygon.get_points();
     
-    return ET;
+    for (std::size_t i = 1; i <= points.size(); ++i)
+    {
+        Point start = points[i-1];
+        Point end;
+        if(i == points.size())
+        {
+            end = points[0];
+        }
+        else
+        {
+            end = points[i];
+        }
+        
+        float slope = calculateSlope(start, end);
+        float yMax = (start.y_get() > end.y_get())?start.y_get():end.y_get();
+        float yMin = (start.y_get() < end.y_get())?start.y_get():end.y_get();
+        float xMin = (start.x_get() < end.x_get())?start.x_get():end.x_get();
+        
+        Edge edge(yMax, xMin, 1.0f/slope);
+        
+        newET.insert(newET.begin() + yMin, edge);
+    }
+    
+    return newET;
 }
 
 
@@ -257,7 +287,10 @@ void keyPressed(unsigned char key, int x, int y)
 	}else if(key == 'c')
 	{
 		polygon.clearPoints();
-	}
+	}else if(key == 'f')
+    {
+        createEdgeTabel(polygon);
+    }
 }
 
 void update()
