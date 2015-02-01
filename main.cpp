@@ -27,7 +27,7 @@ float width = 640.0f;
 
 CPolygon polygon;
 Window window;
-
+typedef Edge* EdgePtr;
 
 #pragma mark Windowing
 #pragma region Windowing
@@ -240,15 +240,32 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
     return newET;
 }
 
-void FillingLCALoop(CPolygon const &polygon){
-	std::vector<Edge> vectorSI = createEdgeTable(polygon);
-	Edge* ptrLCA = 0;
-	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
-		if(vectorSI[i] == 0){
-			
+void InsertIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
+	EdgePtr currentNode = ptrLCA;
+	if(!vectorSI[i].isEmpty()){
+		if(ptrLCA == 0){
+			*(ptrLCA) = (vectorSI[i]);
+		}else{
+			while(!currentNode->getNext()->isEmpty()){ 
+				currentNode = currentNode->getNext();
+			}
+			ptrLCA->setNext(&vectorSI[i]);
 		}
 	}
 }
+
+void FillingLCALoop(CPolygon const &polygon){
+	std::vector<Edge> vectorSI = createEdgeTable(polygon);
+	EdgePtr ptrLCA;
+	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
+		InsertIntoLCA(ptrLCA, vectorSI, i);
+		// TODO
+		//RemoveFromLCA();
+		//SortLCA();
+		//DisplaySegments();
+	}
+}
+
 
 #pragma endregion
 

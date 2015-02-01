@@ -25,7 +25,7 @@ public:
     void setYMin(float xMin);
 	void setXMin(float xMin);
 	void setMRev(float mRev);
-	void setNext(EdgePtr next);
+	void setNext(Edge* next);
 
 private:
 	float yMax;
