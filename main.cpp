@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <numeric>
+#include <limits>
 
 #include "Point.h"
 #include "CPolygon.h"

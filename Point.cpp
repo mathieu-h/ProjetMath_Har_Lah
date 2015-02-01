@@ -5,7 +5,7 @@
 //  Created by Maxime Lahaye on 04/11/14.
 //  Copyright (c) 2014 Maxime Lahaye. All rights reserved.
 //
-
+#include "stdafx.h"
 #include "Point.h"
 
 Point::Point()

@@ -1,7 +1,7 @@
-//#include "stdafx.h"
+#include "stdafx.h"
 #include "Edge.h"
 
-typedef std::shared_ptr<Edge> EdgePtr;
+typedef Edge* EdgePtr;
 
 Edge::Edge(void)
 {
@@ -23,7 +23,8 @@ Edge::Edge(float yMax, float xMin, float mRev, EdgePtr next)
 
 Edge::~Edge(void)
 {
-	this->next.reset();
+	//this->next.reset();
+	delete this->next;
 }
 
 float Edge::getYMax() const
