@@ -30,6 +30,17 @@ Edge::~Edge(void)
     }*/
 }
 
+std::ostream& operator<<(std::ostream& out, const Edge &e)
+{
+    out << "yMax : " << e.getYMax() << " yMin : " << e.getYMin() << " xMin : " << e.getXMin();
+    return out;
+}
+
+bool Edge::isEmpty() const
+{
+    return (this->yMax == 0.0f && this->yMin == 0.0f && this->xMin == 0.0f && this->mRev == 0.0f);
+}
+
 float Edge::getYMax() const
 {
 	return this->yMax;

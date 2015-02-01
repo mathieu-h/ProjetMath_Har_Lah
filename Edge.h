@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
-
+#include <stdio.h>
+#include <iostream>
 class Edge
 {
 
@@ -17,6 +18,8 @@ public:
 	float getXMin() const;
 	float getMRev() const;
 	EdgePtr getNext() const;
+    
+    bool isEmpty() const;
 
 	void setYMax(float yMax);
     void setYMin(float xMin);
@@ -31,7 +34,6 @@ private:
 	float mRev;
 	EdgePtr next;
 
-	
-
 };
 
+std::ostream& operator<<(std::ostream& out, const Edge &e);
