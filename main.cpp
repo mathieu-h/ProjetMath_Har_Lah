@@ -175,9 +175,9 @@ std::vector<Edge> ET;
 void draw_pixel(int x,int y)
 {
     glColor3d(0, 0, 0);
-    glPointSize(5.0);
-    glBegin(GL_POINTS);
-    glVertex2i(x,y);
+    glBegin(GL_LINE);
+    glVertex2f(0,0);
+    glVertex2f(0,0.5);
     glEnd();
 }
 
@@ -219,13 +219,15 @@ float calculateSlope(Point a, Point b)
 std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
 {
     draw_pixel(0, 0);
+    
+    
     float minY = getMinY(polygon.get_points());
     float maxY = getMaxY(polygon.get_points());
     int size = maxY - minY;
-    std::vector<Edge> newET(size);
+    std::vector<Edge> newET;
     std::vector<Point> points = polygon.get_points();
     
-    for (std::size_t i = 1; i <= points.size(); ++i)
+    /*for (std::size_t i = 1; i <= points.size(); ++i)
     {
         Point start = points[i-1];
         Point end;
@@ -246,7 +248,7 @@ std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
         Edge edge(yMax, xMin, 1.0f/slope);
         
         newET.insert(newET.begin() + yMin, edge);
-    }
+    }*/
     
     return newET;
 }
@@ -268,6 +270,7 @@ void MouseButton(int button, int state, int x, int y)
 	{
 		if(state == GLUT_DOWN)
 		{
+            std::cout << x << " " << y << std::endl;
 			float new_x = convertViewportToOpenGLCoordinate(x/(float)width);
 
 			float new_y = -convertViewportToOpenGLCoordinate(y/(float)height);
@@ -303,12 +306,24 @@ void DrawPolygon(std::vector<Point> points)
 {
 	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 	glColor3d((float)(127.f/255.f), (float)(48.f/255.f), (float)(201.f/255.f));
-	glBegin(GL_POLYGON);
+    
+    if(points.size() <= 2){
+        
+        glBegin(GL_LINES);
+        for (std::size_t i = 0; i < points.size()  ; ++i) {
+            glVertex2f(points[i].x_get(), points[i].y_get());
+        }
+        glEnd();
+    }
+    else
+    {
+        glBegin(GL_POLYGON);
 
-	for (std::size_t i = 0; i < points.size()  ; ++i) {
-		glVertex3f(points[i].x_get(), points[i].y_get(), 0.0);
-	}
-	glEnd();
+        for (std::size_t i = 0; i < points.size()  ; ++i) {
+            glVertex2f(points[i].x_get(), points[i].y_get());
+        }
+        glEnd();
+    }
 
 	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 	glColor3d(0, 0, 0);
@@ -321,6 +336,11 @@ void DrawPolygon(std::vector<Point> points)
 
 	glEnd();
 
+    /*glColor3d(0, 0, 0);
+    glBegin(GL_LINES);
+    glVertex2f(-0.3, 0.3);
+    glVertex2f(0.3, 0.3);
+    glEnd();*/
 
 }
 
