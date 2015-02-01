@@ -1,32 +1,32 @@
 #pragma once
 #include <memory>
 
-class Node
+class Edge
 {
 
 public:
-	typedef std::shared_ptr<Node> NodePtr;
+	typedef std::shared_ptr<Edge> EdgePtr;
 
-	Node(void);
-	Node(float yMax, float xMin, float mRev);
-	Node(float yMax, float xMin, float mRev, NodePtr next);
-	~Node(void);
+	Edge(void);
+	Edge(float yMax, float xMin, float mRev);
+	Edge(float yMax, float xMin, float mRev, EdgePtr next);
+	~Edge(void);
 
 	float getYMax() const;
 	float getXMin() const;
 	float getMRev() const;
-	NodePtr getNext() const;
+	EdgePtr getNext() const;
 
 	void setYMax(float yMax);
 	void setXMin(float xMin);
 	void setMRev(float mRev);
-	void setNext(NodePtr next);
+	void setNext(EdgePtr next);
 
 private:
 	float yMax;
 	float xMin;
 	float mRev;
-	NodePtr next;
+	EdgePtr next;
 
 	
 

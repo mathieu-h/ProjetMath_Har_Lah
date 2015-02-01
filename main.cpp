@@ -1,4 +1,4 @@
-#include "stdafx.h"
+//#include "stdafx.h"
 
 #include <stdlib.h>
 #include <iostream>
@@ -26,6 +26,7 @@ int width = 640;
 CPolygon polygon;
 Window window;
 
+#pragma mark Windowing
 #pragma region Windowing
 
 float determinant(float matrix[2][2])
@@ -161,9 +162,13 @@ CPolygon windowing(const CPolygon polygon, const Window window)
 
 #pragma endregion
 
+#pragma mark Filling
 #pragma region Filling
 
+//Active Edge table
 std::vector<Node> AET;
+
+//Edge tabel
 std::vector<Node> ET;
 
 void draw_pixel(int x,int y)
@@ -175,9 +180,50 @@ void draw_pixel(int x,int y)
     glEnd();
 }
 
+float getMinY(std::vector<Point> points)
+{
+    float minY = std::numeric_limits<float>::max();
+    
+    for (std::size_t i = 0; i < points.size(); ++i)
+    {
+        if(points[i].y_get() < minY)
+        {
+            minY = points[i].y_get();
+        }
+    }
+    
+    return minY;
+}
+
+float getMaxY(std::vector<Point> points)
+{
+    float maxY = -std::numeric_limits<float>::max();
+    
+    for (std::size_t i = 0; i < points.size(); ++i)
+    {
+        if(points[i].y_get() > maxY)
+        {
+            maxY = points[i].y_get();
+        }
+    }
+    
+    return maxY;
+
+}
+
+std::vector<Node> createEdgeTabel(CPolygon const &polygon)
+{
+    std::vector<Node> ET;
+    float minY = getMinY(polygon.get_points());
+    float maxY = getMaxY(polygon.get_points());
+    
+    
+}
+
 
 #pragma endregion
 
+#pragma mark GLUT
 #pragma region GLUT
 
 float convertViewportToOpenGLCoordinate(float x)
