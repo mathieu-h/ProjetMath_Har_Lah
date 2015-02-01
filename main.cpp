@@ -221,6 +221,10 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
         }
         
         float slope = calculateSlope(start, end);
+        if(slope == 0)
+        {
+            continue;
+        }
         float yMax = (start.y_get() > end.y_get())?start.y_get():end.y_get();
         float yMin = (start.y_get() < end.y_get())?start.y_get():end.y_get();
         float xMin = (start.x_get() < end.x_get())?start.x_get():end.x_get();
