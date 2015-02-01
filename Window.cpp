@@ -5,7 +5,6 @@
 //  Created by Maxime Lahaye on 17/01/15.
 //  Copyright (c) 2015 Maxime Lahaye. All rights reserved.
 //
-#ifdef _WIN32
 #include "stdafx.h"
 
 
