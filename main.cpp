@@ -9,7 +9,7 @@
 #include "CPolygon.h"
 #include "Window.h"
 #include "CVector.h"
-#include "Node.h"
+#include "Edge.h"
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -166,10 +166,10 @@ CPolygon windowing(const CPolygon polygon, const Window window)
 #pragma region Filling
 
 //Active Edge table
-std::vector<Node> AET;
+std::vector<Edge> AET;
 
 //Edge tabel
-std::vector<Node> ET;
+std::vector<Edge> ET;
 
 void draw_pixel(int x,int y)
 {
@@ -211,13 +211,13 @@ float getMaxY(std::vector<Point> points)
 
 }
 
-std::vector<Node> createEdgeTabel(CPolygon const &polygon)
+std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
 {
-    std::vector<Node> ET;
+    std::vector<Edge> ET;
     float minY = getMinY(polygon.get_points());
     float maxY = getMaxY(polygon.get_points());
     
-    
+    return ET;
 }
 
 
