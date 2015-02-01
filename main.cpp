@@ -231,6 +231,10 @@ std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
         newET.insert(newET.begin() + (int)index, edge);
     }
     
+    for (int i = 0; i < newET.size(); i++) {
+        std::cout << i << " : " <<newET[i] << std::endl;
+    }
+    
     return newET;
 }
 
@@ -252,16 +256,27 @@ void MouseButton(int button, int state, int x, int y)
 	{
 		if(state == GLUT_DOWN)
 		{
-            std::cout << x << " " << y << std::endl;
+            //std::cout << x << " " << y << std::endl;
 			float new_x = convertViewportToOpenGLCoordinate(x/(float)width);
 
 			float new_y = -convertViewportToOpenGLCoordinate(y/(float)height);
 
 			Point p(new_x, new_y);
 			polygon.addPoint(p);
-			std::cout << p << std::endl;
+			//std::cout << p << std::endl;
 		}
-	}
+    }
+    else if(button == GLUT_RIGHT_BUTTON)
+    {
+        if(state == GLUT_DOWN)
+        {
+            float index = convertViewportToOpenGLCoordinate(y/(float)height);
+            index = convertOpenGLToViewportCoordinate(index);
+            index *= glutGet(GLUT_WINDOW_HEIGHT);
+
+            std::cout << y << std::endl;
+        }
+    }
 }
 
 void keyPressed(unsigned char key, int x, int y)

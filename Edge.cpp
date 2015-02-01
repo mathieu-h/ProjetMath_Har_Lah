@@ -5,6 +5,11 @@ typedef Edge* EdgePtr;
 
 Edge::Edge(void)
 {
+    this->yMin = 0;
+    this->yMax = 0;
+    this->xMin = 0;
+    this->mRev = 0;
+    this->next = 0;
 }
 
 
@@ -32,7 +37,10 @@ Edge::~Edge(void)
 
 std::ostream& operator<<(std::ostream& out, const Edge &e)
 {
-    out << "yMax : " << e.getYMax() << " yMin : " << e.getYMin() << " xMin : " << e.getXMin();
+    if(e.isEmpty())
+        out << "empty";
+    else
+        out << "yMax : " << e.getYMax() << " yMin : " << e.getYMin() << " xMin : " << e.getXMin() << " slope : " << 1.0f / e.getMRev();
     return out;
 }
 
