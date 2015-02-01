@@ -12,6 +12,7 @@
 #include "CVector.h"
 #include "Edge.h"
 
+
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #include <OpenGL/gl.h>
@@ -27,141 +28,143 @@ float width = 640.0f;
 CPolygon polygon;
 Window window;
 
+
 #pragma mark Windowing
 #pragma region Windowing
 
 float determinant(float matrix[2][2])
 {
-	return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
+    return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
 }
 
 
 Point intersection(Point a, Point b, Point c, Point d)
 {
-	//matrice 1, matrice inverse.
-	float matrixA[2][2];
-	float matrixAReverse[2][2];
-	float matrixRes[2];
-	float matrixB[2];
-	float det;
-
-	float x1 = a.x_get();
-	float x2 = b.x_get();
-	float x3 = c.x_get();
-	float x4 = d.x_get();
-
-	float y1 = a.y_get();
-	float y2 = b.y_get();
-	float y3 = c.y_get();
-	float y4 = d.y_get();
-
-	Point p;
-
-	matrixA[0][0] = (x2 - x1);
-	matrixA[0][1] = (x3 - x4);
-	matrixA[1][0] = (y2 - y1);
-	matrixA[1][1] = (y3 - y4);
-
-	matrixB[0] = (c.x_get() - a.x_get());
-	matrixB[1] = (c.y_get()  - a.y_get() );
-
-	det = determinant(matrixA);
-
-	if(determinant == 0)
-		throw 1;
-
-	//Res = A-1 * B
-
-	//The Matrix A must be reversed
-	matrixAReverse[0][0] = matrixA[1][1] / det;
-	matrixAReverse[0][1] = -matrixA[0][1] / det;
-	matrixAReverse[1][0] = -matrixA[1][0] / det;
-	matrixAReverse[1][1] = matrixA[0][0] / det;
-
-	//Matrix product between reverse A and B matrix
-	matrixRes[0] = matrixAReverse[0][0] * matrixB[0] + matrixAReverse[0][1] * matrixB[1];
-	matrixRes[1] = matrixAReverse[1][0] * matrixB[0] + matrixAReverse[1][1] * matrixB[1];
-
-	//The intersection is outise of the polygon current line segment
-	if(matrixRes[0] > 1 || matrixRes[0] < 0)
-		throw 2;
-
-	//Calculate the intersection point
-	p.x_set(((1 - matrixRes[0]) * x1) + (matrixRes[0] * x2));
-	p.y_set(((1 - matrixRes[0]) * y1) + (matrixRes[0] * y2));
-
-	return p;
+    //matrice 1, matrice inverse.
+    float matrixA[2][2];
+    float matrixAReverse[2][2];
+    float matrixRes[2];
+    float matrixB[2];
+    float det;
+    
+    float x1 = a.x_get();
+    float x2 = b.x_get();
+    float x3 = c.x_get();
+    float x4 = d.x_get();
+    
+    float y1 = a.y_get();
+    float y2 = b.y_get();
+    float y3 = c.y_get();
+    float y4 = d.y_get();
+    
+    Point p;
+    
+    matrixA[0][0] = (x2 - x1);
+    matrixA[0][1] = (x3 - x4);
+    matrixA[1][0] = (y2 - y1);
+    matrixA[1][1] = (y3 - y4);
+    
+    matrixB[0] = (c.x_get() - a.x_get());
+    matrixB[1] = (c.y_get()  - a.y_get() );
+    
+    det = determinant(matrixA);
+    
+    if(determinant == 0)
+        throw 1;
+    
+    //Res = A-1 * B
+    
+    //The Matrix A must be reversed
+    matrixAReverse[0][0] = matrixA[1][1] / det;
+    matrixAReverse[0][1] = -matrixA[0][1] / det;
+    matrixAReverse[1][0] = -matrixA[1][0] / det;
+    matrixAReverse[1][1] = matrixA[0][0] / det;
+    
+    //Matrix product between reverse A and B matrix
+    matrixRes[0] = matrixAReverse[0][0] * matrixB[0] + matrixAReverse[0][1] * matrixB[1];
+    matrixRes[1] = matrixAReverse[1][0] * matrixB[0] + matrixAReverse[1][1] * matrixB[1];
+    
+    //The intersection is outise of the polygon current line segment
+    if(matrixRes[0] > 1 || matrixRes[0] < 0)
+        throw 2;
+    
+    //Calculate the intersection point
+    p.x_set(((1 - matrixRes[0]) * x1) + (matrixRes[0] * x2));
+    p.y_set(((1 - matrixRes[0]) * y1) + (matrixRes[0] * y2));
+    
+    return p;
 }
 
 /***  Determine if the point of the polygon is inside or outside the window   ***/
 bool visible(Point lastPointPoly, Point currentPointWindow, Point nextPointWindow)
 {
-	//Vector in the same direction as the window's edge
-	CVector vector_window(currentPointWindow, nextPointWindow);
-
-	//Vector linking the window's edge and the polygon point
-	CVector vector_poly(currentPointWindow, lastPointPoly);
-
-	//We need the normal of the window edge vector
-	CVector normal_window = vector_window.normal();
-
-	//The dot product of the vector a . b = ax * bx + ay * by
-	float dot_product = normal_window.diff_x() * vector_poly.diff_x() + normal_window.diff_y() * vector_poly.diff_y();
-
-	return dot_product >= 0;
+    //Vector in the same direction as the window's edge
+    CVector vector_window(currentPointWindow, nextPointWindow);
+    
+    //Vector linking the window's edge and the polygon point
+    CVector vector_poly(currentPointWindow, lastPointPoly);
+    
+    //We need the normal of the window edge vector
+    CVector normal_window = vector_window.normal();
+    
+    //The dot product of the vector a . b = ax * bx + ay * by
+    float dot_product = normal_window.diff_x() * vector_poly.diff_x() + normal_window.diff_y() * vector_poly.diff_y();
+    
+    return dot_product >= 0;
 }
 
 CPolygon windowing(const CPolygon polygon, const Window window)
 {
-	std::vector<Point> points_polygon = polygon.get_points();
-	std::vector<Point> points_window = window.get_points();
-	points_window.push_back(points_window.front());
-
-	CPolygon polygonNew;
-
-	for (std::size_t i = 0; i < points_window.size() - 1; ++i)
-	{
-		polygonNew.clearPoints();
-		for (std::size_t j = 0; j <= points_polygon.size()-1; ++j)
-		{
-			
-			if(j > 0)
-			{
-				try {
-					Point intersectionPoint = intersection(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]);
-					polygonNew.addPoint(intersectionPoint);
-				}
-				catch(int e)
-				{
-
-				}
-			}
-			if(visible(points_polygon[j], points_window[i], points_window[i+1]))
-			{
-				polygonNew.addPoint(points_polygon[j]);
-			}
-		}
-		if(polygonNew.get_points().size() > 0)
-		{
-			try {
-				Point intersectionPoint = intersection(points_polygon[points_polygon.size()-1], points_polygon[0], points_window[i], points_window[i+1]);
-				polygonNew.addPoint(intersectionPoint);
-			}
-			catch(int e)
-			{
-
-			}
-		}
-
-		points_polygon = polygonNew.get_points();
-
-	}
-
-	polygonNew.set_points(points_polygon);
-	return polygonNew;
+    std::vector<Point> points_polygon = polygon.get_points();
+    std::vector<Point> points_window = window.get_points();
+    points_window.push_back(points_window.front());
+    
+    CPolygon polygonNew;
+    
+    for (std::size_t i = 0; i < points_window.size() - 1; ++i)
+    {
+        polygonNew.clearPoints();
+        for (std::size_t j = 0; j <= points_polygon.size()-1; ++j)
+        {
+            
+            if(j > 0)
+            {
+                try {
+                    Point intersectionPoint = intersection(points_polygon[j-1], points_polygon[j], points_window[i], points_window[i+1]);
+                    polygonNew.addPoint(intersectionPoint);
+                }
+                catch(int e)
+                {
+                    
+                }
+            }
+            if(visible(points_polygon[j], points_window[i], points_window[i+1]))
+            {
+                polygonNew.addPoint(points_polygon[j]);
+            }
+        }
+        if(polygonNew.get_points().size() > 0)
+        {
+            try {
+                Point intersectionPoint = intersection(points_polygon[points_polygon.size()-1], points_polygon[0], points_window[i], points_window[i+1]);
+                polygonNew.addPoint(intersectionPoint);
+            }
+            catch(int e)
+            {
+                
+            }
+        }
+        
+        points_polygon = polygonNew.get_points();
+        
+    }
+    
+    polygonNew.set_points(points_polygon);
+    return polygonNew;
 }
 
 #pragma endregion
+
 
 #pragma mark Filling
 #pragma region Filling
@@ -172,6 +175,7 @@ std::vector<Edge> AET;
 //Edge tabel
 std::vector<Edge> ET;
 
+
 void draw_pixel(int x,int y)
 {
     glColor3d(0, 0, 0);
@@ -179,36 +183,6 @@ void draw_pixel(int x,int y)
     glVertex2f(0,0);
     glVertex2f(0,0.5);
     glEnd();
-}
-
-float getMinY(std::vector<Point> points)
-{
-    float minY = std::numeric_limits<float>::max();
-    
-    for (std::size_t i = 0; i < points.size(); ++i)
-    {
-        if(points[i].y_get() < minY)
-        {
-            minY = points[i].y_get();
-        }
-    }
-    
-    return minY;
-}
-
-float getMaxY(std::vector<Point> points)
-{
-    float maxY = -std::numeric_limits<float>::max();
-    
-    for (std::size_t i = 0; i < points.size(); ++i)
-    {
-        if(points[i].y_get() > maxY)
-        {
-            maxY = points[i].y_get();
-        }
-    }
-    
-    return maxY;
 }
 
 float calculateSlope(Point a, Point b)
@@ -224,9 +198,6 @@ float convertOpenGLToViewportCoordinate(float x)
 
 std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
 {
-    
-    float minY = getMinY(polygon.get_points());
-    float maxY = getMaxY(polygon.get_points());
     std::vector<Edge> newET(glutGet(GLUT_WINDOW_HEIGHT));
     std::vector<Point> points = polygon.get_points();
     
