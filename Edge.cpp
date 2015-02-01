@@ -14,7 +14,7 @@ Edge::Edge(float yMax, float yMin, float xMin, float mRev)
     this->yMin = yMin;
 	this->xMin = xMin;
 	this->mRev = mRev;
-    this->next = nullptr;
+    this->next = 0;
 }
 
 Edge::Edge(float yMax, float yMin, float xMin, float mRev, EdgePtr next)
