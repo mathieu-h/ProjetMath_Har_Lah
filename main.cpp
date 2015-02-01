@@ -216,15 +216,18 @@ float calculateSlope(Point a, Point b)
     return (b.y_get() - a.y_get())/(b.x_get() - a.x_get());
 }
 
+
+float convertOpenGLToViewportCoordinate(float x)
+{
+    return (x + 1)/2;
+}
+
 std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
 {
-    draw_pixel(0, 0);
-    
     
     float minY = getMinY(polygon.get_points());
     float maxY = getMaxY(polygon.get_points());
-    int size = maxY - minY;
-    std::vector<Edge> newET;
+    std::vector<Edge> newET(glutGet(GLUT_WINDOW_HEIGHT));
     std::vector<Point> points = polygon.get_points();
     
     for (std::size_t i = 1; i <= points.size(); ++i)
@@ -247,7 +250,10 @@ std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
         
         Edge edge(yMax, yMin, xMin, 1.0f/slope);
         
-        newET.insert(newET.begin() + yMin, edge);
+        float index = convertOpenGLToViewportCoordinate(yMin);
+        index *= glutGet(GLUT_WINDOW_HEIGHT);
+        
+        newET.insert(newET.begin() + (int)index, edge);
     }
     
     return newET;
@@ -263,6 +269,7 @@ float convertViewportToOpenGLCoordinate(float x)
 {
 	return (x * 2) - 1;
 }
+
 
 void MouseButton(int button, int state, int x, int y)
 {
@@ -338,7 +345,7 @@ void DrawPolygon(std::vector<Point> points)
 
     float y = -1;
     
-    for (int i = 0; i < glutGet(GLUT_WINDOW_HEIGHT); ++i) {
+    /*for (int i = 0; i < glutGet(GLUT_WINDOW_HEIGHT); ++i) {
         glColor3d(0, 0, 0);
         glBegin(GL_LINES);
         glVertex2f(-0.3, y);
@@ -346,7 +353,7 @@ void DrawPolygon(std::vector<Point> points)
         glEnd();
         
         y+= 2.0f/glutGet(GLUT_WINDOW_HEIGHT);
-    }
+    }*/
 
 }
 
