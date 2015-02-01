@@ -196,9 +196,15 @@ float convertOpenGLToViewportCoordinate(float x)
     return (x + 1)/2;
 }
 
-std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
+std::vector<Edge> createEdgeTable(CPolygon const &polygon)
 {
-    std::vector<Edge> newET(glutGet(GLUT_WINDOW_HEIGHT));
+	Edge emptyEdge;
+    std::vector<Edge> newET(glutGet(GLUT_WINDOW_HEIGHT),emptyEdge);
+	/*
+	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
+
+	}
+	*/
     std::vector<Point> points = polygon.get_points();
     
     for (std::size_t i = 1; i <= points.size(); ++i)
@@ -230,6 +236,15 @@ std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
     return newET;
 }
 
+void FillingLCALoop(CPolygon const &polygon){
+	std::vector<Edge> vectorSI = createEdgeTable(polygon);
+	Edge* ptrLCA = 0;
+	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
+		if(vectorSI[i] == 0){
+			
+		}
+	}
+}
 
 #pragma endregion
 
@@ -271,7 +286,7 @@ void keyPressed(unsigned char key, int x, int y)
 		polygon.clearPoints();
 	}else if(key == 'f')
     {
-        createEdgeTabel(polygon);
+        FillingLCALoop(polygon);
     }
 }
 
@@ -371,7 +386,6 @@ int main(int argc, char **argv) {
 
 	// enter GLUT event processing cycle
 	glutMainLoop();
-
 	return 1;
 }
 
