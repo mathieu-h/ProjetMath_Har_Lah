@@ -10,6 +10,7 @@
 #include "Window.h"
 #include "CVector.h"
 #include "Edge.h"
+#include <limits>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -123,7 +124,7 @@ CPolygon windowing(const CPolygon polygon, const Window window)
 		polygonNew.clearPoints();
 		for (std::size_t j = 0; j <= points_polygon.size()-1; ++j)
 		{
-			
+
 			if(j > 0)
 			{
 				try {
@@ -183,7 +184,7 @@ void draw_pixel(int x,int y)
 float getMinY(std::vector<Point> points)
 {
     float minY = std::numeric_limits<float>::max();
-    
+
     for (std::size_t i = 0; i < points.size(); ++i)
     {
         if(points[i].y_get() < minY)
@@ -191,14 +192,14 @@ float getMinY(std::vector<Point> points)
             minY = points[i].y_get();
         }
     }
-    
+
     return minY;
 }
 
 float getMaxY(std::vector<Point> points)
 {
     float maxY = -std::numeric_limits<float>::max();
-    
+
     for (std::size_t i = 0; i < points.size(); ++i)
     {
         if(points[i].y_get() > maxY)
@@ -206,7 +207,7 @@ float getMaxY(std::vector<Point> points)
             maxY = points[i].y_get();
         }
     }
-    
+
     return maxY;
 
 }
@@ -214,9 +215,9 @@ float getMaxY(std::vector<Point> points)
 std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
 {
     std::vector<Edge> ET;
-    float minY = getMinY(polygon.get_points());
+s    float minY = getMinY(polygon.get_points());
     float maxY = getMaxY(polygon.get_points());
-    
+
     return ET;
 }
 

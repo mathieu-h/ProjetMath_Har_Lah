@@ -5,7 +5,7 @@ class Edge
 {
 
 public:
-	typedef std::shared_ptr<Edge> EdgePtr;
+	typedef Edge* EdgePtr;
 
 	Edge(void);
 	Edge(float yMax, float xMin, float mRev);
