@@ -14,18 +14,20 @@ Edge::Edge(float yMax, float yMin, float xMin, float mRev)
     this->yMin = yMin;
 	this->xMin = xMin;
 	this->mRev = mRev;
+    this->next = nullptr;
 }
 
 Edge::Edge(float yMax, float yMin, float xMin, float mRev, EdgePtr next)
 {
 	Edge(yMax, yMin, xMin, mRev);
-	this->next = next;
+	*(this->next) = *next;
 }
 
 Edge::~Edge(void)
 {
-	//this->next.reset();
-	delete this->next;
+    /*if(this->next != nullptr){
+        delete this->next;
+    }*/
 }
 
 float Edge::getYMax() const
