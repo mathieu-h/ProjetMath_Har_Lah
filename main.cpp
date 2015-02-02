@@ -27,7 +27,7 @@ float width = 640.0f;
 
 CPolygon polygon;
 Window window;
-
+typedef Edge* EdgePtr;
 
 #pragma mark Windowing
 #pragma region Windowing
@@ -196,9 +196,15 @@ float convertOpenGLToViewportCoordinate(float x)
     return (x + 1)/2;
 }
 
-std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
+std::vector<Edge> createEdgeTable(CPolygon const &polygon)
 {
-    std::vector<Edge> newET(glutGet(GLUT_WINDOW_HEIGHT));
+	Edge emptyEdge;
+    std::vector<Edge> newET(glutGet(GLUT_WINDOW_HEIGHT),emptyEdge);
+	/*
+	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
+
+	}
+	*/
     std::vector<Point> points = polygon.get_points();
     
     for (std::size_t i = 1; i <= points.size(); ++i)
@@ -236,6 +242,32 @@ std::vector<Edge> createEdgeTabel(CPolygon const &polygon)
     }
     
     return newET;
+}
+
+void InsertIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
+	EdgePtr currentNode = ptrLCA;
+	if(!vectorSI[i].isEmpty()){
+		if(ptrLCA == 0){
+			*(ptrLCA) = (vectorSI[i]);
+		}else{
+			while(!currentNode->getNext()->isEmpty()){ 
+				currentNode = currentNode->getNext();
+			}
+			ptrLCA->setNext(&vectorSI[i]);
+		}
+	}
+}
+
+void FillingLCALoop(CPolygon const &polygon){
+	std::vector<Edge> vectorSI = createEdgeTable(polygon);
+	EdgePtr ptrLCA;
+	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
+		InsertIntoLCA(ptrLCA, vectorSI, i);
+		// TODO
+		//RemoveFromLCA();
+		//SortLCA();
+		//DisplaySegments();
+	}
 }
 
 
@@ -290,7 +322,7 @@ void keyPressed(unsigned char key, int x, int y)
 		polygon.clearPoints();
 	}else if(key == 'f')
     {
-        createEdgeTabel(polygon);
+        FillingLCALoop(polygon);
     }
 }
 
@@ -390,7 +422,6 @@ int main(int argc, char **argv) {
 
 	// enter GLUT event processing cycle
 	glutMainLoop();
-
 	return 1;
 }
 
