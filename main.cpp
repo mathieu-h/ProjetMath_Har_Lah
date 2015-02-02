@@ -300,7 +300,8 @@ EdgePtr RemoveFromLCA(EdgePtr ptrLCA, int i){
 			return currentNode;
 		}
 	}else{
-		currentNode = RemoveFromLCA(currentNode, i);
+		currentNode->setNext(RemoveFromLCA(currentNode->getNext(), i));
+		return currentNode;
 	}
 }
 
