@@ -196,15 +196,37 @@ float convertOpenGLToViewportCoordinate(float x)
     return (x + 1)/2;
 }
 
+
+void InsertIntoEdgeTable(std::vector<Edge>& edgeTable, Edge e, int index)
+{
+    if(edgeTable[index].isEmpty())
+    {
+        e.setNext(0);
+        edgeTable[index] = e;
+    }
+    else
+    {
+        EdgePtr currentNode = &edgeTable[index];
+        while(currentNode->getNext() != 0)
+        {
+            currentNode = currentNode->getNext();
+        }
+        e.setNext(0);
+        currentNode->setNext(&e);
+    }
+}
+
 std::vector<Edge> createEdgeTable(CPolygon const &polygon)
 {
 	Edge emptyEdge;
     std::vector<Edge> newET(glutGet(GLUT_WINDOW_HEIGHT),emptyEdge);
-	/*
-	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
-
+	
+	for(std::size_t i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
+        Edge e;
+        newET.insert(newET.begin() + i, e);
 	}
-	*/
+    
+	
     std::vector<Point> points = polygon.get_points();
     
     for (std::size_t i = 1; i <= points.size(); ++i)
@@ -233,8 +255,9 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
         
         float index = convertOpenGLToViewportCoordinate(yMin);
         index *= glutGet(GLUT_WINDOW_HEIGHT);
+        int indexInt = (int) index;
         
-        newET.insert(newET.begin() + (int)index, edge);
+        InsertIntoEdgeTable(newET, edge, indexInt);
     }
     
     for (int i = 0; i < newET.size(); i++) {
@@ -243,6 +266,7 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
     
     return newET;
 }
+
 
 void InsertIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
 	EdgePtr currentNode = ptrLCA;

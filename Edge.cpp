@@ -42,7 +42,16 @@ std::ostream& operator<<(std::ostream& out, const Edge &e)
     if(e.isEmpty())
         out << "empty";
     else
-        out << "yMax : " << e.getYMax() << " yMin : " << e.getYMin() << " xMin : " << e.getXMin() << " slope : " << 1.0f / e.getMRev();
+    {
+        Edge currentEdge = e;
+        EdgePtr currentEdgePtr = &currentEdge;
+        while (currentEdgePtr->getNext() != 0) {
+            out << "[ yMax : " << currentEdgePtr->getYMax() << " yMin : " << currentEdgePtr->getYMin() << " xMin : " << currentEdgePtr->getXMin() << " slope : " << 1.0f / currentEdgePtr->getMRev() << "] , ";
+            currentEdgePtr = currentEdgePtr->getNext();
+        }
+        out << "[ yMax : " << currentEdgePtr->getYMax() << " yMin : " << currentEdgePtr->getYMin() << " xMin : " << currentEdgePtr->getXMin() << " slope : " << 1.0f / currentEdgePtr->getMRev() << "] , ";
+
+    }
     return out;
 }
 
