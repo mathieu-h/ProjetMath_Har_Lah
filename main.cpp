@@ -259,11 +259,11 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
         
         InsertIntoEdgeTable(newET, edge, indexInt);
     }
-    
+    /*
     for (int i = 0; i < newET.size(); i++) {
         std::cout << i << " : " <<newET[i] << std::endl;
     }
-    
+    */
     return newET;
 }
 
@@ -272,7 +272,7 @@ void InsertIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
 	EdgePtr currentNode = ptrLCA;
 	if(!vectorSI[i].isEmpty()){
 		if(ptrLCA == 0){
-			*(ptrLCA) = (vectorSI[i]);
+			ptrLCA = &vectorSI[i];
 		}else{
 			while(currentNode->getNext() != 0){ 
 				currentNode = currentNode->getNext();
@@ -283,13 +283,33 @@ void InsertIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
 	}
 }
 
+EdgePtr RemoveFromLCA(EdgePtr ptrLCA, int i){
+	EdgePtr currentNode = ptrLCA;
+	if(currentNode->getYMax() == i){
+		if(currentNode->getNext() == 0){		
+			currentNode = 0;
+			return currentNode;
+		}else{
+			EdgePtr oldCurrentNode = currentNode;
+			currentNode = oldCurrentNode->getNext();
+			delete oldCurrentNode;
+			oldCurrentNode = 0;
+			return currentNode;
+		}
+	}else{
+		currentNode = RemoveFromLCA(currentNode, i);
+	}
+}
+
 void FillingLCALoop(CPolygon const &polygon){
 	std::vector<Edge> vectorSI = createEdgeTable(polygon);
-	EdgePtr ptrLCA;
+	EdgePtr ptrLCA = 0;
 	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
+		// vérifier si la ptrLCA est bien changée, à voir si il ne faut pas que Insert la renvoie ou qu'on passe la prtLCA par valeur 
+		// et non par copie
 		InsertIntoLCA(ptrLCA, vectorSI, i);
 		// TODO
-		//RemoveFromLCA();
+		ptrLCA = RemoveFromLCA(ptrLCA, i);
 		//SortLCA();
 		//DisplaySegments();
 	}
