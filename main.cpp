@@ -285,6 +285,9 @@ void InsertIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
 
 EdgePtr RemoveFromLCA(EdgePtr ptrLCA, int i){
 	EdgePtr currentNode = ptrLCA;
+	if(ptrLCA == 0){
+		return ptrLCA;
+	}
 	if(currentNode->getYMax() == i){
 		if(currentNode->getNext() == 0){		
 			currentNode = 0;
