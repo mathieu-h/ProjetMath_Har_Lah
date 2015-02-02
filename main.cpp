@@ -274,9 +274,10 @@ void InsertIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
 		if(ptrLCA == 0){
 			*(ptrLCA) = (vectorSI[i]);
 		}else{
-			while(!currentNode->getNext()->isEmpty()){ 
+			while(!currentNode->getNext() != 0){ 
 				currentNode = currentNode->getNext();
 			}
+			vectorSI[i].setNext(0);
 			ptrLCA->setNext(&vectorSI[i]);
 		}
 	}
