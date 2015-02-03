@@ -197,7 +197,7 @@ float convertOpenGLToViewportCoordinate(float x)
 }
 
 
-void InsertIntoEdgeTable(std::vector<Edge>& edgeTable, Edge e, int index)
+void InsertIntoEdgeTable(std::vector<Edge>& edgeTable, Edge& e, int index)
 {
     if(edgeTable[index].isEmpty())
     {
@@ -261,7 +261,9 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
     }
     /*
     for (int i = 0; i < newET.size(); i++) {
-        std::cout << i << " : " <<newET[i] << std::endl;
+		if(!newET[i].isEmpty()){
+			std::cout << i << " : " << newET[i] << std::endl;
+		}
     }
     */
     return newET;
@@ -381,7 +383,7 @@ void FillingLCALoop(CPolygon const &polygon){
 		ptrLCA = InsertNodesIntoLCA(ptrLCA, vectorSI, i);
 		// TODO
 		ptrLCA = RemoveNodesFromLCA(ptrLCA, i);
-		SortLCA(ptrLCA, &compare);
+		ptrLCA = SortLCA(ptrLCA, &compare);
 		//DisplaySegments();
 	}
 }
