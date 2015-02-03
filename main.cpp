@@ -260,13 +260,13 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
         
         InsertIntoEdgeTable(newET, edge, indexInt);
     }
-    /*
+    
     for (int i = 0; i < newET.size(); i++) {
 		if(!newET[i].isEmpty()){
 			std::cout << i << " : " << newET[i] << std::endl;
 		}
     }
-    */
+    
     return newET;
 }
 
@@ -383,8 +383,8 @@ void FillingLCALoop(CPolygon const &polygon){
 		// et non par copie
 		ptrLCA = InsertNodesIntoLCA(ptrLCA, vectorSI, i);
 		// TODO
-		ptrLCA = RemoveNodesFromLCA(ptrLCA, i);
-		ptrLCA = SortLCA(ptrLCA, &compare);
+		//ptrLCA = RemoveNodesFromLCA(ptrLCA, i);
+		//ptrLCA = SortLCA(ptrLCA, &compare);
 		//DisplaySegments();
 	}
 }
