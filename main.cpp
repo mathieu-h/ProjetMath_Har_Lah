@@ -317,8 +317,7 @@ EdgePtr SortLCA(EdgePtr list,int (*compare)(EdgePtr one,EdgePtr two))
           temp  = list,
           last  = list,
           result = 0,
-          next   = 0,
-          tail   = 0;
+          next   = 0;
 
     // Find halfway through the list (by running two pointers, one at twice the speed of the other).
     while (temp && temp->getNext())
@@ -354,13 +353,7 @@ EdgePtr SortLCA(EdgePtr list,int (*compare)(EdgePtr one,EdgePtr two))
         }		
         if (!result) {
             result=next;
-        } else {
-            tail->setNext(next);
         }
-		/*
-        next->prev = tail;  // Optional.
-        tail = next;
-		*/
     }
     return result;
 }
