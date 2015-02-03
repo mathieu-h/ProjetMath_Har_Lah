@@ -260,38 +260,136 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
         
         InsertIntoEdgeTable(newET, edge, indexInt);
     }
-    
+    /*
     for (int i = 0; i < newET.size(); i++) {
         std::cout << i << " : " <<newET[i] << std::endl;
     }
-    
+    */
     return newET;
 }
 
 
-void InsertIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
+EdgePtr InsertNodesIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
 	EdgePtr currentNode = ptrLCA;
 	if(!vectorSI[i].isEmpty()){
-		if(ptrLCA == 0){
-			*(ptrLCA) = (vectorSI[i]);
+		if(ptrLCA == 0){			
+			vectorSI[i].setNext(0);
+			ptrLCA = &vectorSI[i];
 		}else{
 			while(currentNode->getNext() != 0){ 
 				currentNode = currentNode->getNext();
 			}
 			vectorSI[i].setNext(0);
-			ptrLCA->setNext(&vectorSI[i]);
+			currentNode->setNext(&vectorSI[i]);
 		}
+	}
+	return ptrLCA;
+}
+
+EdgePtr RemoveNodesFromLCA(EdgePtr ptrLCA, int i){
+	EdgePtr currentNode = ptrLCA;
+	if(ptrLCA == 0){
+		return ptrLCA;
+	}
+	if(currentNode->getYMax() == i){
+		if(currentNode->getNext() == 0){		
+			currentNode = 0;
+			return currentNode;
+		}else{
+			EdgePtr oldCurrentNode = currentNode;
+			currentNode = oldCurrentNode->getNext();
+			delete oldCurrentNode;
+			oldCurrentNode = 0;
+			return currentNode;
+		}
+	}else{
+		currentNode->setNext(RemoveNodesFromLCA(currentNode->getNext(), i));
+		return currentNode;
+	}
+}
+
+EdgePtr SortLCA(EdgePtr list,int (*compare)(EdgePtr one,EdgePtr two))
+{
+    // Trivial case.
+    if (!list || !list->getNext())
+        return list;
+
+    EdgePtr right = list,
+          temp  = list,
+          last  = list,
+          result = 0,
+          next   = 0,
+          tail   = 0;
+
+    // Find halfway through the list (by running two pointers, one at twice the speed of the other).
+    while (temp && temp->getNext())
+    {
+        last = right;
+        right = right->getNext();
+        temp = temp->getNext()->getNext();
+    }
+
+    // Break the list in two. (prev pointers are broken here, but we fix later)
+    last->setNext(0);
+
+    // Recurse on the two smaller lists:
+    list = SortLCA(list, compare);
+    right = SortLCA(right, compare);
+
+    // Merge:
+    while (list || right)
+    {
+        // Take from empty lists, or compare:
+        if (!right) {
+            next = list;
+            list = list->getNext();
+        } else if (!list) {
+            next = right;
+            right = right->getNext();
+        } else if (compare(list, right) < 0) {
+            next = list;
+            list = list->getNext();
+        } else {
+            next = right;
+            right = right->getNext();
+        }		
+        if (!result) {
+            result=next;
+        } else {
+            tail->setNext(next);
+        }
+		/*
+        next->prev = tail;  // Optional.
+        tail = next;
+		*/
+    }
+    return result;
+}
+
+int compare(const EdgePtr one, const EdgePtr two){
+	int firstX = one->getXMin();
+	int secondX = one->getXMin();
+	if(firstX < secondX){
+		return -1;
+	}
+	else if( firstX == secondX){
+		return 0;
+	}
+	else{
+		return 1;
 	}
 }
 
 void FillingLCALoop(CPolygon const &polygon){
 	std::vector<Edge> vectorSI = createEdgeTable(polygon);
-	EdgePtr ptrLCA;
+	EdgePtr ptrLCA = 0;
 	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
-		InsertIntoLCA(ptrLCA, vectorSI, i);
+		// vérifier si la ptrLCA est bien changée, à voir si il ne faut pas que Insert la renvoie ou qu'on passe la prtLCA par valeur 
+		// et non par copie
+		ptrLCA = InsertNodesIntoLCA(ptrLCA, vectorSI, i);
 		// TODO
-		//RemoveFromLCA();
-		//SortLCA();
+		ptrLCA = RemoveNodesFromLCA(ptrLCA, i);
+		SortLCA(ptrLCA, &compare);
 		//DisplaySegments();
 	}
 }
