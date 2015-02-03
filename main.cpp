@@ -221,7 +221,8 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
 	Edge emptyEdge;
     std::vector<Edge> newET(glutGet(GLUT_WINDOW_HEIGHT),emptyEdge);
 	
-	for(std::size_t i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
+	for(std::size_t i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++)
+    {
         Edge e;
         newET.insert(newET.begin() + i, e);
 	}
