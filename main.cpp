@@ -253,7 +253,8 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
         float xMin = (start.x_get() < end.x_get())?start.x_get():end.x_get();
         
         Edge edge(yMax, yMin, xMin, 1.0f/slope);
-        
+		//edge.getXMin();
+
         float index = convertOpenGLToViewportCoordinate(yMin);
         index *= glutGet(GLUT_WINDOW_HEIGHT);
         int indexInt = (int) index;
@@ -266,23 +267,23 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon)
 			std::cout << i << " : " << newET[i] << std::endl;
 		}
     }
-    
     return newET;
 }
 
 
-EdgePtr InsertNodesIntoLCA(EdgePtr ptrLCA, std::vector<Edge>& vectorSI, int i){
+EdgePtr InsertNodesIntoLCA(EdgePtr ptrLCA, const std::vector<Edge>& vectorSI, int i){
 	EdgePtr currentNode = ptrLCA;
 	if(!vectorSI[i].isEmpty()){
+		// add while vectorSI[i]->getNext() pour bien ajouter tous les noeuds à cette valeur de y dans la LCA
+		EdgePtr edgeLCA = new Edge(vectorSI[i]);
+		edgeLCA->setNext(0);
 		if(ptrLCA == 0){			
-			vectorSI[i].setNext(0);
-			ptrLCA = &vectorSI[i];
+			ptrLCA = edgeLCA;
 		}else{
 			while(currentNode->getNext() != 0){ 
 				currentNode = currentNode->getNext();
 			}
-			vectorSI[i].setNext(0);
-			currentNode->setNext(&vectorSI[i]);
+			currentNode->setNext(edgeLCA);
 		}
 	}
 	return ptrLCA;
@@ -293,6 +294,7 @@ EdgePtr RemoveNodesFromLCA(EdgePtr ptrLCA, int i){
 	if(ptrLCA == 0){
 		return ptrLCA;
 	}
+	// ajouter la conversion Y coordonnée viewport et openGL (les indices sont des entiers)
 	if(currentNode->getYMax() == i){
 		if(currentNode->getNext() == 0){		
 			currentNode = 0;
@@ -378,15 +380,20 @@ int compare(const EdgePtr one, const EdgePtr two){
 void FillingLCALoop(CPolygon const &polygon){
 	std::vector<Edge> vectorSI = createEdgeTable(polygon);
 	EdgePtr ptrLCA = 0;
-	for(int i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++){
+	for(int i = 0 ; i < vectorSI.size() ; i++){
 		// vérifier si la ptrLCA est bien changée, à voir si il ne faut pas que Insert la renvoie ou qu'on passe la prtLCA par valeur 
 		// et non par copie
-		ptrLCA = InsertNodesIntoLCA(ptrLCA, vectorSI, i);
+		/*
+		if(vectorSI[i].isEmpty()){
+			printf("Hello");
+		}*/
 		// TODO
-		//ptrLCA = RemoveNodesFromLCA(ptrLCA, i);
+		ptrLCA = InsertNodesIntoLCA(ptrLCA, vectorSI, i);
+		ptrLCA = RemoveNodesFromLCA(ptrLCA, i);
 		//ptrLCA = SortLCA(ptrLCA, &compare);
 		//DisplaySegments();
 	}
+
 }
 
 
