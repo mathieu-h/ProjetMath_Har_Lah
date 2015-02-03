@@ -69,7 +69,7 @@ Point intersection(Point a, Point b, Point c, Point d)
     
     det = determinant(matrixA);
     
-    if(determinant == 0)
+    if(det == 0)
         throw 1;
     
     //Res = A-1 * B
