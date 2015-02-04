@@ -205,6 +205,7 @@ void InsertIntoEdgeTable(Node<Edge>* e, int index)
         ET[index] = e;
     }else{
         ET[index]->InsertAfter(e);
+        //TODO gérer le cas ou il y a deja plusieurs node
     }
 }
 
