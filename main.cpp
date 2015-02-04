@@ -176,12 +176,12 @@ std::vector<Edge> AET;
 std::vector<Edge> ET;
 
 
-void draw_pixel(int x,int y)
+void draw_line(Point& a, Point& b)
 {
     glColor3d(0, 0, 0);
-    glBegin(GL_LINE);
-    glVertex2f(0,0);
-    glVertex2f(0,0.5);
+    glBegin(GL_LINES);
+    glVertex2f(a.x_get(),a.y_get());
+    glVertex2f(b.x_get(),b.y_get());
     glEnd();
 }
 
@@ -491,16 +491,19 @@ void DrawPolygon(std::vector<Point> points)
 
 	glEnd();
 
-    float y = -1;
+    /*float y = -1;
     
-    /*for (int i = 0; i < glutGet(GLUT_WINDOW_HEIGHT); ++i) {
-        glColor3d(0, 0, 0);
-        glBegin(GL_LINES);
-        glVertex2f(-0.3, y);
-        glVertex2f(0.3, y);
-        glEnd();
-        
+    Point a;
+    Point b;
+    a.x_set(-0.5);
+    b.x_set(0.5);
+    
+    for (int i = 0; i < glutGet(GLUT_WINDOW_HEIGHT); ++i)
+    {
+        draw_line(a, b);
         y+= 2.0f/glutGet(GLUT_WINDOW_HEIGHT);
+        a.y_set(y);
+        b.y_set(y);
     }*/
 
 }
