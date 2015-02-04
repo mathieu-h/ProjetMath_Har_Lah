@@ -11,6 +11,7 @@
 #include "Window.h"
 #include "CVector.h"
 #include "Edge.h"
+#include "Node.h"
 
 
 #ifdef __APPLE__
@@ -170,10 +171,10 @@ CPolygon windowing(const CPolygon polygon, const Window window)
 #pragma region Filling
 
 //Active Edge table
-std::vector<Edge> AET;
+std::vector<Node<Edge>*> AET;
 
 //Edge tabel
-std::vector<Edge> ET;
+std::vector<Node<Edge>*> ET;
 
 
 void draw_line(Point& a, Point& b)
@@ -197,23 +198,9 @@ float convertOpenGLToViewportCoordinate(float x)
 }
 
 
-void InsertIntoEdgeTable(std::vector<Edge>& edgeTable, Edge& e, int index)
+void InsertIntoEdgeTable(Node<Edge>* e, int index)
 {
-    if(edgeTable[index].isEmpty())
-    {
-        e.setNext(0);
-        edgeTable[index] = e;
-    }
-    else
-    {
-        EdgePtr currentNode = &edgeTable[index];
-        while(currentNode->getNext() != 0)
-        {
-            currentNode = currentNode->getNext();
-        }
-        e.setNext(0);
-        currentNode->setNext(&e);
-    }
+    ET[index]->InsertAfter(e);
 }
 
 void createEdgeTable(CPolygon const &polygon)
@@ -224,7 +211,8 @@ void createEdgeTable(CPolygon const &polygon)
 	for(std::size_t i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++)
     {
         Edge e;
-        ET.insert(ET.begin() + i, e);
+        Node<Edge>* node = new Node<Edge>(e);
+        ET.insert(ET.begin() + i, node);
 	}
     
 	
@@ -253,17 +241,18 @@ void createEdgeTable(CPolygon const &polygon)
         float xMin = (start.x_get() < end.x_get())?start.x_get():end.x_get();
         
         Edge edge(yMax, yMin, xMin, 1.0f/slope);
+        Node<Edge>* node = new Node<Edge>(edge);
 		//edge.getXMin();
 
         float index = convertOpenGLToViewportCoordinate(yMin);
         index *= glutGet(GLUT_WINDOW_HEIGHT);
         int indexInt = (int) index;
         
-        InsertIntoEdgeTable(ET, edge, indexInt);
+        InsertIntoEdgeTable(node, indexInt);
     }
     
     for (int i = 0; i < ET.size(); i++) {
-		if(!ET[i].isEmpty()){
+		if(!ET[i]->data.isEmpty()){
 			std::cout << i << " : " << ET[i] << std::endl;
 		}
     }
@@ -271,7 +260,7 @@ void createEdgeTable(CPolygon const &polygon)
 
 
 EdgePtr InsertNodesIntoLCA(EdgePtr ptrLCA, const std::vector<Edge>& vectorSI, int i){
-	EdgePtr currentNode = ptrLCA;
+	/*EdgePtr currentNode = ptrLCA;
 	if(!vectorSI[i].isEmpty()){
 		// add while vectorSI[i]->getNext() pour bien ajouter tous les noeuds à cette valeur de y dans la LCA
 		EdgePtr edgeLCA = new Edge(vectorSI[i]);
@@ -284,11 +273,11 @@ EdgePtr InsertNodesIntoLCA(EdgePtr ptrLCA, const std::vector<Edge>& vectorSI, in
 			}
 			currentNode->setNext(edgeLCA);
 		}
-	}
+	}*/
 	return ptrLCA;
 }
 
-EdgePtr RemoveNodesFromLCA(EdgePtr ptrLCA, int i){
+/*EdgePtr RemoveNodesFromLCA(EdgePtr ptrLCA, int i){
 	EdgePtr currentNode = ptrLCA;
 	if(ptrLCA == 0){
 		return ptrLCA;
@@ -309,9 +298,9 @@ EdgePtr RemoveNodesFromLCA(EdgePtr ptrLCA, int i){
 		currentNode->setNext(RemoveNodesFromLCA(currentNode->getNext(), i));
 		return currentNode;
 	}
-}
+}*/
 
-EdgePtr SortLCA(EdgePtr list,int (*compare)(EdgePtr one,EdgePtr two))
+/*EdgePtr SortLCA(EdgePtr list,int (*compare)(EdgePtr one,EdgePtr two))
 {
     // Trivial case.
     if (!list || !list->getNext())
@@ -360,7 +349,7 @@ EdgePtr SortLCA(EdgePtr list,int (*compare)(EdgePtr one,EdgePtr two))
         }
     }
     return result;
-}
+}*/
 
 int compare(const EdgePtr one, const EdgePtr two){
 	int firstX = one->getXMin();
@@ -380,11 +369,11 @@ void FillingLCALoop(CPolygon const &polygon){
 	createEdgeTable(polygon);
 	EdgePtr ptrLCA = 0;
     int i = 0;
-    while(ET[i].isEmpty()){
+    while(ET[i]->data.isEmpty()){
         i++;
     }
-    EdgePtr edge = ET[i].getNext();
-    std::cout << "GET NEXT : " << *edge << std::endl;
+    Edge edge = ET[i]->NextNode()->data;
+    std::cout << "GET NEXT : " << edge << std::endl;
 	for(int i = 0 ; i < ET.size() ; i++){
 		// vérifier si la ptrLCA est bien changée, à voir si il ne faut pas que Insert la renvoie ou qu'on passe la prtLCA par valeur 
 		// et non par copie
@@ -393,8 +382,8 @@ void FillingLCALoop(CPolygon const &polygon){
 			printf("Hello");
 		}*/
 		// TODO
-		ptrLCA = InsertNodesIntoLCA(ptrLCA, ET, i);
-		ptrLCA = RemoveNodesFromLCA(ptrLCA, i);
+		//ptrLCA = InsertNodesIntoLCA(ptrLCA, ET, i);
+		//sptrLCA = RemoveNodesFromLCA(ptrLCA, i);
 		//ptrLCA = SortLCA(ptrLCA, &compare);
 		//DisplaySegments();
 	}

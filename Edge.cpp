@@ -9,7 +9,6 @@ Edge::Edge(void)
     this->yMax = 0;
     this->xMin = 0;
     this->mRev = 0;
-    this->next = 0;
 }
 
 
@@ -19,22 +18,10 @@ Edge::Edge(float yMax, float yMin, float xMin, float mRev)
     this->yMin = yMin;
 	this->xMin = xMin;
 	this->mRev = mRev;
-	//Edge emptyEdge;
-    //this->next = &emptyEdge;
-	this->next = 0;
-}
-
-Edge::Edge(float yMax, float yMin, float xMin, float mRev, EdgePtr next)
-{
-	Edge(yMax, yMin, xMin, mRev);
-	*(this->next) = *next;
 }
 
 Edge::~Edge(void)
 {
-    /*if(this->next != nullptr){
-        delete this->next;
-    }*/
 }
 
 std::ostream& operator<<(std::ostream& out, const Edge &e)
@@ -43,13 +30,7 @@ std::ostream& operator<<(std::ostream& out, const Edge &e)
         out << "empty";
     else
     {
-        Edge currentEdge = e;
-        EdgePtr currentEdgePtr = &currentEdge;
-        while (currentEdgePtr->getNext() != 0) {
-            out << "[ yMax : " << currentEdgePtr->getYMax() << " yMin : " << currentEdgePtr->getYMin() << " xMin : " << currentEdgePtr->getXMin() << " slope : " << 1.0f / currentEdgePtr->getMRev() << "] , ";
-            currentEdgePtr = currentEdgePtr->getNext();
-        }
-        out << "[ yMax : " << currentEdgePtr->getYMax() << " yMin : " << currentEdgePtr->getYMin() << " xMin : " << currentEdgePtr->getXMin() << " slope : " << 1.0f / currentEdgePtr->getMRev() << "] , ";
+        out << "[ yMax : " << e.getYMax() << " yMin : " << e.getYMin() << " xMin : " << e.getXMin() << " 1/slope : " << 1.0f / e.getMRev() << "] , ";
 
     }
     return out;
@@ -80,11 +61,6 @@ float Edge::getMRev() const
 	return this->mRev;
 }
 
-EdgePtr Edge::getNext() const
-{
-	return this->next;
-}
-
 void Edge::setYMax(float yMax)
 {
 	this->yMax = yMax;
@@ -103,9 +79,4 @@ void Edge::setXMin(float xMin)
 void Edge::setMRev(float mRev)
 {
 	this->mRev = mRev;
-}
-
-void Edge::setNext(Edge* next)
-{
-	this->next = next;
 }
