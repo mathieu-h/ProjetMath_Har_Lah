@@ -200,7 +200,12 @@ float convertOpenGLToViewportCoordinate(float x)
 
 void InsertIntoEdgeTable(Node<Edge>* e, int index)
 {
-    ET[index]->InsertAfter(e);
+    Node<Edge>* currentEdge = ET[index];
+    if(currentEdge->data.isEmpty()){
+        ET[index] = e;
+    }else{
+        ET[index]->InsertAfter(e);
+    }
 }
 
 void createEdgeTable(CPolygon const &polygon)
@@ -253,7 +258,7 @@ void createEdgeTable(CPolygon const &polygon)
     
     for (int i = 0; i < ET.size(); i++) {
 		if(!ET[i]->data.isEmpty()){
-			std::cout << i << " : " << ET[i] << std::endl;
+			std::cout << i << " : " << ET[i]->data << std::endl;
 		}
     }
 }

@@ -7,7 +7,7 @@
 
 #include "Node.h"
 
-template<class T>
+/*template<class T>
 Node<T>::Node()
 {
     // default constructor
@@ -66,4 +66,4 @@ Node<T> * GetNode(const T& item, Node<T>* nextptr = NULL)
         exit(1);
     }
     return newnode;
-}
+}*/
