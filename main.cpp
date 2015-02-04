@@ -216,7 +216,7 @@ void InsertIntoEdgeTable(std::vector<Edge>& edgeTable, Edge& e, int index)
     }
 }
 
-std::vector<Edge> createEdgeTable(CPolygon const &polygon, std::vector<Edge>& newET)
+void createEdgeTable(CPolygon const &polygon)
 {
 	Edge emptyEdge;
     //std::vector<Edge> newET(glutGet(GLUT_WINDOW_HEIGHT),emptyEdge);
@@ -224,7 +224,7 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon, std::vector<Edge>& ne
 	for(std::size_t i = 0 ; i < glutGet(GLUT_WINDOW_HEIGHT) ; i++)
     {
         Edge e;
-        newET.insert(newET.begin() + i, e);
+        ET.insert(ET.begin() + i, e);
 	}
     
 	
@@ -259,15 +259,14 @@ std::vector<Edge> createEdgeTable(CPolygon const &polygon, std::vector<Edge>& ne
         index *= glutGet(GLUT_WINDOW_HEIGHT);
         int indexInt = (int) index;
         
-        InsertIntoEdgeTable(newET, edge, indexInt);
+        InsertIntoEdgeTable(ET, edge, indexInt);
     }
     
-    for (int i = 0; i < newET.size(); i++) {
-		if(!newET[i].isEmpty()){
-			std::cout << i << " : " << newET[i] << std::endl;
+    for (int i = 0; i < ET.size(); i++) {
+		if(!ET[i].isEmpty()){
+			std::cout << i << " : " << ET[i] << std::endl;
 		}
     }
-    return newET;
 }
 
 
@@ -378,16 +377,15 @@ int compare(const EdgePtr one, const EdgePtr two){
 }
 
 void FillingLCALoop(CPolygon const &polygon){
-    std::vector<Edge> edgeTable;
-	std::vector<Edge> vectorSI = createEdgeTable(polygon, edgeTable);
+	createEdgeTable(polygon);
 	EdgePtr ptrLCA = 0;
     int i = 0;
-    while(edgeTable[i].isEmpty()){
+    while(ET[i].isEmpty()){
         i++;
     }
-    EdgePtr edge = edgeTable[i].getNext();
+    EdgePtr edge = ET[i].getNext();
     std::cout << "GET NEXT : " << *edge << std::endl;
-	for(int i = 0 ; i < vectorSI.size() ; i++){
+	for(int i = 0 ; i < ET.size() ; i++){
 		// vérifier si la ptrLCA est bien changée, à voir si il ne faut pas que Insert la renvoie ou qu'on passe la prtLCA par valeur 
 		// et non par copie
 		/*
@@ -395,7 +393,7 @@ void FillingLCALoop(CPolygon const &polygon){
 			printf("Hello");
 		}*/
 		// TODO
-		ptrLCA = InsertNodesIntoLCA(ptrLCA, vectorSI, i);
+		ptrLCA = InsertNodesIntoLCA(ptrLCA, ET, i);
 		ptrLCA = RemoveNodesFromLCA(ptrLCA, i);
 		//ptrLCA = SortLCA(ptrLCA, &compare);
 		//DisplaySegments();
