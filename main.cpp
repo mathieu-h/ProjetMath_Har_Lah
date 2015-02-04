@@ -380,6 +380,12 @@ int compare(const EdgePtr one, const EdgePtr two){
 void FillingLCALoop(CPolygon const &polygon){
 	std::vector<Edge> vectorSI = createEdgeTable(polygon);
 	EdgePtr ptrLCA = 0;
+    int i = 0;
+    while(vectorSI[i].isEmpty()){
+        i++;
+    }
+    EdgePtr edge = vectorSI[i].getNext();
+    std::cout << "GET NEXT : " << *edge << std::endl;
 	for(int i = 0 ; i < vectorSI.size() ; i++){
 		// vérifier si la ptrLCA est bien changée, à voir si il ne faut pas que Insert la renvoie ou qu'on passe la prtLCA par valeur 
 		// et non par copie
